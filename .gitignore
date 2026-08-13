@@ -10,5 +10,9 @@ project.private.config.json
 # Local COS credentials for tools/cos-ping.js (never commit)
 tools/cos.local.json
 
+# 微信小程序代码上传私钥（CI / 本地）
+private.*.key
+.ci-private.*.key
+
 # SCF 机密（appsecret / COS 密钥），保留 config.example.js
 scf/*/config.js

@@ -1,4 +1,16 @@
-.page { padding: 24rpx 24rpx 48rpx; min-height: 100vh; }
+.page {
+  padding: 24rpx 24rpx 48rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.page-main { flex: 1 0 auto; }
+.page-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-top: 48rpx;
+}
 .search-bar { display: flex; align-items: center; gap: 16rpx; margin-bottom: 32rpx; }
 .search-input-wrap {
   flex: 1; display: flex; align-items: center; height: 72rpx; padding: 0 24rpx;

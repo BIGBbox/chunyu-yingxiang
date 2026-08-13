@@ -1,0 +1,124 @@
+name: 微信小程序 CI
+
+# 推荐：Actions 页点「Run workflow」，选自动升版本即可，不必手打 tag。
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 自动升版本（推荐 patch；选 none 则用下方 version / package.json）
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - none
+        default: patch
+      version:
+        description: 仅 bump=none 时生效；留空则用当前 package.json
+        required: false
+        default: ''
+      desc:
+        description: 上传/审核说明（可空）
+        required: false
+        default: ''
+      submit_audit:
+        description: 上传后是否提交审核
+        required: true
+        type: boolean
+        default: false
+      robot:
+        description: CI 机器人编号 1-30
+        required: false
+        default: '1'
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install deps
+        run: npm install
+
+      - name: Auto bump version
+        id: bump
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.bump != 'none' }}
+        shell: bash
+        run: |
+          VER="$(node tools/mp-bump.js ${{ inputs.bump }})"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore: release ${VER} [skip ci]"
+          git push origin HEAD:${{ github.ref_name }}
+          echo "已自动升版本并推送: $VER"
+
+      - name: Resolve version / desc
+        id: meta
+        shell: bash
+        run: |
+          VER="${{ steps.bump.outputs.version }}"
+          if [ -z "$VER" ]; then
+            VER="${{ github.event.inputs.version }}"
+          fi
+          if [ -z "$VER" ] && [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VER="${GITHUB_REF_NAME#v}"
+          fi
+          if [ -z "$VER" ]; then
+            VER="$(node -p "require('./package.json').version")"
+          fi
+          DESC="${{ github.event.inputs.desc }}"
+          if [ -z "$DESC" ]; then
+            DESC="ci ${VER} (${GITHUB_SHA::7})"
+          fi
+          ROBOT="${{ github.event.inputs.robot }}"
+          if [ -z "$ROBOT" ]; then ROBOT=1; fi
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "desc=$DESC" >> "$GITHUB_OUTPUT"
+          echo "robot=$ROBOT" >> "$GITHUB_OUTPUT"
+          echo "version=$VER desc=$DESC robot=$ROBOT"
+
+      - name: Upload to WeChat
+        env:
+          WX_APPID: ${{ secrets.WX_APPID }}
+          WX_PRIVATE_KEY: ${{ secrets.WX_PRIVATE_KEY }}
+          MP_VERSION: ${{ steps.meta.outputs.version }}
+          MP_DESC: ${{ steps.meta.outputs.desc }}
+          MP_ROBOT: ${{ steps.meta.outputs.robot }}
+        run: |
+          if [ -z "$WX_PRIVATE_KEY" ]; then
+            echo "缺少 Secrets.WX_PRIVATE_KEY，请按 docs/微信CI.md 配置"
+            exit 1
+          fi
+          node tools/mp-ci.js upload --version "$MP_VERSION" --desc "$MP_DESC" --robot "$MP_ROBOT"
+
+      - name: Submit audit (optional)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.submit_audit }}
+        env:
+          WX_APPID: ${{ secrets.WX_APPID }}
+          WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
+          MP_DESC: ${{ steps.meta.outputs.desc }}
+        run: |
+          if [ -z "$WX_APPSECRET" ]; then
+            echo "提审需要 Secrets.WX_APPSECRET"
+            exit 1
+          fi
+          node tools/mp-ci.js submit --desc "$MP_DESC"

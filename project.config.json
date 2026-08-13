@@ -23,11 +23,23 @@
         "type": "folder"
       },
       {
+        "value": ".github",
+        "type": "folder"
+      },
+      {
         "value": ".gitignore",
         "type": "file"
       },
       {
         "value": ".cursorignore",
+        "type": "file"
+      },
+      {
+        "value": "private.*.key",
+        "type": "file"
+      },
+      {
+        "value": ".ci-private.*.key",
         "type": "file"
       },
       {

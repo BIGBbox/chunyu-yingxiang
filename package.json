@@ -4,7 +4,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cos:ping": "node tools/cos-ping.js"
+    "cos:ping": "node tools/cos-ping.js",
+    "mp:upload": "node tools/mp-ci.js upload",
+    "mp:submit": "node tools/mp-ci.js submit",
+    "mp:ci": "node tools/mp-ci.js all",
+    "mp:release": "node tools/mp-release.js"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +16,7 @@
   "description": "",
   "dependencies": {
     "cos-nodejs-sdk-v5": "^2.15.4",
-    "cos-wx-sdk-v5": "^1.8.0"
+    "cos-wx-sdk-v5": "^1.8.0",
+    "miniprogram-ci": "^2.1.31"
   }
 }

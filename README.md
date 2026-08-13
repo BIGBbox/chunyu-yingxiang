@@ -25,6 +25,8 @@ npm install
 npm run cos:ping
 ```
 
+- **GitHub 自动上传/提审**：见 [docs/微信CI.md](docs/微信CI.md)。日常推荐 Actions 里点 Run workflow（自动升版本），或本地 `npm run mp:release`，不必手打 tag。
+
 ## 配置
 
 [`config.js`](config.js) 中填写：
