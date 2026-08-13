@@ -1,27 +1,13 @@
 name: 微信小程序 CI
 
-# 推荐：Actions 页点「Run workflow」，选自动升版本即可，不必手打 tag。
+# 推送到 master（含 PR 合并）即上传微信；用 package.json 的 version 打 tag。
+# 若同名 tag 已存在则直接失败，需先改 package.json 的 version 再推。
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
-      bump:
-        description: 自动升版本（推荐 patch；选 none 则用下方 version / package.json）
-        required: true
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-          - none
-        default: patch
-      version:
-        description: 仅 bump=none 时生效；留空则用当前 package.json
-        required: false
-        default: ''
-      desc:
-        description: 上传/审核说明（可空）
-        required: false
-        default: ''
       submit_audit:
         description: 上传后是否提交审核
         required: true
@@ -31,9 +17,10 @@ on:
         description: CI 机器人编号 1-30
         required: false
         default: '1'
-  push:
-    tags:
-      - 'v*'
+
+concurrency:
+  group: mp-ci-master
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -57,44 +44,34 @@ jobs:
       - name: Install deps
         run: npm install
 
-      - name: Auto bump version
-        id: bump
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.bump != 'none' }}
-        shell: bash
-        run: |
-          VER="$(node tools/mp-bump.js ${{ inputs.bump }})"
-          echo "version=$VER" >> "$GITHUB_OUTPUT"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json
-          git commit -m "chore: release ${VER} [skip ci]"
-          git push origin HEAD:${{ github.ref_name }}
-          echo "已自动升版本并推送: $VER"
-
-      - name: Resolve version / desc
+      - name: Resolve version & tag
         id: meta
         shell: bash
         run: |
-          VER="${{ steps.bump.outputs.version }}"
-          if [ -z "$VER" ]; then
-            VER="${{ github.event.inputs.version }}"
+          set -e
+          git fetch --tags --force origin
+
+          VER="$(node -p "require('./package.json').version")"
+          TAG="v${VER}"
+
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            echo "::error::远程已存在 tag ${TAG}。请先修改 package.json 的 version 后再推送到 master。"
+            exit 1
           fi
-          if [ -z "$VER" ] && [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            VER="${GITHUB_REF_NAME#v}"
-          fi
-          if [ -z "$VER" ]; then
-            VER="$(node -p "require('./package.json').version")"
-          fi
-          DESC="${{ github.event.inputs.desc }}"
-          if [ -z "$DESC" ]; then
-            DESC="ci ${VER} (${GITHUB_SHA::7})"
-          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${TAG}"
+          git push origin "${TAG}"
+
+          DESC="ci ${VER} (${GITHUB_SHA::7})"
           ROBOT="${{ github.event.inputs.robot }}"
           if [ -z "$ROBOT" ]; then ROBOT=1; fi
+
           echo "version=$VER" >> "$GITHUB_OUTPUT"
           echo "desc=$DESC" >> "$GITHUB_OUTPUT"
           echo "robot=$ROBOT" >> "$GITHUB_OUTPUT"
-          echo "version=$VER desc=$DESC robot=$ROBOT"
+          echo "resolved version=$VER tag=${TAG}"
 
       - name: Upload to WeChat
         env:

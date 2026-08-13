@@ -25,7 +25,7 @@ npm install
 npm run cos:ping
 ```
 
-- **GitHub 自动上传/提审**：见 [docs/微信CI.md](docs/微信CI.md)。日常推荐 Actions 里点 Run workflow（自动升版本），或本地 `npm run mp:release`，不必手打 tag。
+- **GitHub 自动上传**：推送到 `master`（或合并进 master）即触发；用 `package.json` 的 version 打 tag，若 tag 已存在则流水线失败。见 [docs/微信CI.md](docs/微信CI.md)。
 
 ## 配置
 

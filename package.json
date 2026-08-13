@@ -1,14 +1,13 @@
 {
   "name": "chunyu-yingxiang",
-  "version": "1.0.5",
+  "version": "1.0.3",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cos:ping": "node tools/cos-ping.js",
     "mp:upload": "node tools/mp-ci.js upload",
     "mp:submit": "node tools/mp-ci.js submit",
-    "mp:ci": "node tools/mp-ci.js all",
-    "mp:release": "node tools/mp-release.js"
+    "mp:ci": "node tools/mp-ci.js all"
   },
   "keywords": [],
   "author": "",
