@@ -1,0 +1,8 @@
+{
+  "Bucket": "",
+  "Region": "ap-guangzhou",
+  "SecretId": "AKIDxxxxxxxx",
+  "SecretKey": "xxxxxxxx",
+  "baseUrl": "https://xxxcos.ap-guangzhou.myqcloud.com",
+  "contentPath": "data/content.json"
+}

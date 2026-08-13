@@ -1,0 +1,75 @@
+<view class="page safe-bottom">
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">⌕</text>
+      <input
+        class="search-input"
+        placeholder="搜索本店客片关键词"
+        placeholder-class="search-ph"
+        value="{{keyword}}"
+        confirm-type="search"
+        bindinput="onKeywordInput"
+        bindconfirm="onSearch"
+      />
+    </view>
+    <view class="search-btn" bindtap="onImageSearch">图片搜索</view>
+  </view>
+
+  <view class="section-title" bindtap="onTitleTap">椿屿影像(热门系列)</view>
+
+  <view class="series-grid">
+    <view
+      class="series-card"
+      wx:for="{{seriesList}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onSeriesTap"
+    >
+      <image class="series-cover" src="{{item.cover}}" mode="aspectFill" lazy-load />
+      <view class="series-name">{{item.name}}</view>
+    </view>
+  </view>
+
+  <view class="section-title section-title--gap" wx:if="{{showXhs || showDouyin}}">社交平台账号</view>
+  <view class="social-row" wx:if="{{showXhs || showDouyin}}">
+    <view class="social-card" wx:if="{{showXhs}}">
+      <view class="social-head">小红书</view>
+      <image class="social-banner" src="{{social.xhs.banner}}" mode="aspectFill" />
+      <view class="social-profile">
+        <image class="social-avatar" src="{{social.xhs.avatar}}" mode="aspectFill" />
+        <view class="social-meta">
+          <text class="social-account">{{social.xhs.account}}</text>
+          <text class="social-id">{{social.xhs.id}}</text>
+        </view>
+      </view>
+      <view class="social-footer">
+        <text class="platform-tag">小红书</text>
+        <image class="social-qr" src="{{social.xhs.qrcode}}" mode="aspectFill" data-url="{{social.xhs.qrcode}}" catchtap="onPreviewQr" />
+      </view>
+    </view>
+
+    <view class="social-card" wx:if="{{showDouyin}}">
+      <view class="social-head">抖音</view>
+      <view class="dy-qr-wrap">
+        <image class="dy-qr" src="{{social.douyin.qrcode}}" mode="aspectFill" data-url="{{social.douyin.qrcode}}" bindtap="onPreviewQr" />
+      </view>
+      <view class="dy-info">
+        <text class="social-account">{{social.douyin.account}}</text>
+        <text class="social-id">{{social.douyin.id}}</text>
+      </view>
+      <view class="dy-actions">
+        <view class="dy-action" data-url="{{social.douyin.qrcode}}" bindtap="onSaveQr">保存图片</view>
+        <view class="dy-action" data-url="{{social.douyin.qrcode}}" bindtap="onPreviewQr">打开抖音</view>
+      </view>
+    </view>
+  </view>
+
+  <block wx:if="{{showStore}}">
+    <view class="section-title section-title--gap">门店地址</view>
+    <view class="store-entry" bindtap="onStoreTap">
+      <view class="store-icon">📍</view>
+      <text class="store-entry-text">门店地址信息</text>
+      <text class="store-arrow">›</text>
+    </view>
+  </block>
+</view>

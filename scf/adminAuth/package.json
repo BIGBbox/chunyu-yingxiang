@@ -1,0 +1,6 @@
+{
+  "name": "adminAuth",
+  "version": "1.0.0",
+  "description": "腾讯云 SCF：小程序管理员登录鉴权（code2session + openid 白名单），下发默认 COS 配置",
+  "main": "index.js"
+}

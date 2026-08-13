@@ -1,0 +1,18 @@
+.page { padding: 32rpx 28rpx 48rpx; min-height: 100vh; background: #f7f7f7; }
+.block { margin-bottom: 48rpx; }
+.block-title { font-size: 36rpx; font-weight: 700; margin-bottom: 8rpx; }
+.block-sub { font-size: 26rpx; color: #999; margin-bottom: 20rpx; }
+.card { background: #fff; border-radius: 20rpx; padding: 32rpx 28rpx; box-shadow: var(--shadow); }
+.card--empty { min-height: 160rpx; display: flex; align-items: center; justify-content: center; }
+.addr-label { font-size: 26rpx; color: #999; margin-bottom: 12rpx; }
+.addr-text { font-size: 28rpx; line-height: 1.6; margin-bottom: 28rpx; }
+.copy-btn {
+  height: 80rpx; line-height: 80rpx; text-align: center; border-radius: 40rpx;
+  border: 2rpx solid #74c0fc; color: #339af0; font-size: 28rpx;
+}
+.empty-tip { color: #999; }
+.guide-img { width: 100%; border-radius: 12rpx; margin-bottom: 16rpx; }
+.env-grid { display: flex; flex-wrap: wrap; justify-content: space-between; }
+.env-img {
+  width: calc(50% - 8rpx); height: 280rpx; border-radius: 16rpx; margin-bottom: 16rpx; background: #eee;
+}

@@ -1,0 +1,25 @@
+<view class="page safe-bottom">
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">⌕</text>
+      <input
+        class="search-input"
+        placeholder="景德镇门店共有{{styleCount}}套客片可供参考"
+        placeholder-class="search-ph"
+        value="{{keyword}}"
+        confirm-type="search"
+        bindinput="onKeywordInput"
+        bindconfirm="onSearch"
+      />
+    </view>
+    <view class="search-btn" bindtap="onImageSearch">图片搜索</view>
+  </view>
+
+  <view class="style-grid" wx:if="{{filtered.length}}">
+    <view class="style-card" wx:for="{{filtered}}" wx:key="id" data-id="{{item.id}}" bindtap="onStyleTap">
+      <image class="style-cover" src="{{item.cover}}" mode="aspectFill" lazy-load />
+      <view class="style-name">{{item.name}}</view>
+    </view>
+  </view>
+  <view class="empty" wx:else><text>暂无匹配样式</text></view>
+</view>

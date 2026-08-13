@@ -1,0 +1,267 @@
+module.exports = {
+	"updatedAt": "2026-08-10 17:00:00",
+	"settings": {
+		"watermarkEnabled": false
+	},
+	"series": [
+		{
+			"id": "hanfu",
+			"name": "汉服系列",
+			"cover": "https://picsum.photos/seed/hanfu/600/800",
+			"hot": true,
+			"sort": 1
+		},
+		{
+			"id": "xiaotang",
+			"name": "小唐风系列",
+			"cover": "https://picsum.photos/seed/xiaotang/600/800",
+			"hot": true,
+			"sort": 2
+		},
+		{
+			"id": "zhanguo",
+			"name": "战国袍系列",
+			"cover": "https://picsum.photos/seed/zhanguo/600/800",
+			"hot": true,
+			"sort": 3
+		},
+		{
+			"id": "qipao",
+			"name": "旗袍系列",
+			"cover": "https://picsum.photos/seed/qipao/600/800",
+			"hot": true,
+			"sort": 4
+		},
+		{
+			"id": "male",
+			"name": "男生系列",
+			"cover": "https://picsum.photos/seed/male/600/800",
+			"hot": false,
+			"sort": 5
+		},
+		{
+			"id": "modern",
+			"name": "现代系列",
+			"cover": "https://picsum.photos/seed/modern/600/800",
+			"hot": false,
+			"sort": 6
+		}
+	],
+	"styles": [
+		{
+			"id": "hf1",
+			"seriesId": "hanfu",
+			"name": "花千骨（景德镇站）",
+			"cover": "https://picsum.photos/seed/hf1a/600/800",
+			"images": [
+				"https://picsum.photos/seed/hf1a/600/800",
+				"https://picsum.photos/seed/hf1b/600/800",
+				"https://picsum.photos/seed/hf1c/600/800",
+				"https://picsum.photos/seed/hf1d/600/800"
+			],
+			"gallery": [
+				"https://picsum.photos/seed/hf1a/600/800",
+				"https://picsum.photos/seed/hf1b/600/800",
+				"https://picsum.photos/seed/hf1e/600/900",
+				"https://picsum.photos/seed/hf1f/600/900"
+			],
+			"avatar": "https://picsum.photos/seed/avatar/120/120",
+			"viewCount": 102872,
+			"updatedAt": "2026-07-03 17:53:51",
+			"sort": 1,
+			"package": {
+				"title": "花千骨（景德镇站）",
+				"scene": "单独妆造399，周边拍摄899，虎丘拍摄1099。",
+				"service": "资深摄影师、化妆师全程一对一服务",
+				"shooting": "底片：30张（多拍免费送）\n精修：9张（精修均为人工精修）",
+				"clothing": "提供服装：1套\n定制妆造：1次",
+				"remark": "东园，无需门票，打车自费，车程15-20分钟"
+			}
+		},
+		{
+			"id": "xt1",
+			"seriesId": "xiaotang",
+			"name": "帷帽小唐风（景德镇站）",
+			"cover": "https://picsum.photos/seed/xt1a/600/800",
+			"images": [
+				"https://picsum.photos/seed/xt1a/600/800",
+				"https://picsum.photos/seed/xt1b/600/800",
+				"https://picsum.photos/seed/xt1c/600/800"
+			],
+			"gallery": [
+				"https://picsum.photos/seed/xt1a/600/800",
+				"https://picsum.photos/seed/xt1b/600/800",
+				"https://picsum.photos/seed/xt1d/600/900"
+			],
+			"avatar": "https://picsum.photos/seed/avatar/120/120",
+			"viewCount": 88621,
+			"updatedAt": "2026-07-01 12:00:00",
+			"sort": 1,
+			"package": {
+				"title": "帷帽小唐风（景德镇站）",
+				"scene": "单独妆造399，周边拍摄899，虎丘拍摄1099。",
+				"service": "资深摄影师、化妆师全程一对一服务",
+				"shooting": "底片：30张（多拍免费送）\n精修：9张",
+				"clothing": "提供服装：1套\n定制妆造：1次",
+				"remark": ""
+			}
+		},
+		{
+			"id": "xt2",
+			"seriesId": "xiaotang",
+			"name": "小唐风（景德镇站）",
+			"cover": "https://picsum.photos/seed/xt2a/600/800",
+			"images": [
+				"https://picsum.photos/seed/xt2a/600/800",
+				"https://picsum.photos/seed/xt2b/600/800"
+			],
+			"gallery": [
+				"https://picsum.photos/seed/xt2a/600/800",
+				"https://picsum.photos/seed/xt2c/600/900"
+			],
+			"avatar": "https://picsum.photos/seed/avatar/120/120",
+			"viewCount": 65210,
+			"updatedAt": "2026-06-20 10:00:00",
+			"sort": 2,
+			"package": {
+				"title": "小唐风（景德镇站）",
+				"scene": "单独妆造399，周边拍摄899，虎丘拍摄1099。",
+				"service": "资深摄影师、化妆师全程一对一服务",
+				"shooting": "底片：30张\n精修：9张",
+				"clothing": "提供服装：1套",
+				"remark": ""
+			}
+		},
+		{
+			"id": "zg1",
+			"seriesId": "zhanguo",
+			"name": "战国袍客片（景德镇站）",
+			"cover": "https://picsum.photos/seed/zg1a/600/800",
+			"images": [
+				"https://picsum.photos/seed/zg1a/600/800",
+				"https://picsum.photos/seed/zg1b/600/800"
+			],
+			"gallery": [
+				"https://picsum.photos/seed/zg1a/600/800",
+				"https://picsum.photos/seed/zg1c/600/900"
+			],
+			"avatar": "https://picsum.photos/seed/avatar/120/120",
+			"viewCount": 42100,
+			"updatedAt": "2026-06-01 09:00:00",
+			"sort": 1,
+			"package": {
+				"title": "战国袍客片（景德镇站）",
+				"scene": "单独妆造399，周边拍摄899，虎丘拍摄1099。",
+				"service": "资深摄影师、化妆师全程一对一服务",
+				"shooting": "底片：30张\n精修：9张",
+				"clothing": "提供服装：1套",
+				"remark": ""
+			}
+		},
+		{
+			"id": "qp1",
+			"seriesId": "qipao",
+			"name": "旗袍客片（景德镇站）",
+			"cover": "https://picsum.photos/seed/qp1a/600/800",
+			"images": [
+				"https://picsum.photos/seed/qp1a/600/800"
+			],
+			"gallery": [
+				"https://picsum.photos/seed/qp1a/600/800"
+			],
+			"avatar": "https://picsum.photos/seed/avatar/120/120",
+			"viewCount": 33000,
+			"updatedAt": "2026-05-15 15:00:00",
+			"sort": 1,
+			"package": {
+				"title": "旗袍客片（景德镇站）",
+				"scene": "单独妆造399，周边拍摄899。",
+				"service": "资深摄影师、化妆师全程一对一服务",
+				"shooting": "底片：30张\n精修：9张",
+				"clothing": "提供服装：1套",
+				"remark": ""
+			}
+		},
+		{
+			"id": "m1",
+			"seriesId": "male",
+			"name": "男生汉服（景德镇站）",
+			"cover": "https://picsum.photos/seed/m1a/600/800",
+			"images": [
+				"https://picsum.photos/seed/m1a/600/800"
+			],
+			"gallery": [
+				"https://picsum.photos/seed/m1a/600/800"
+			],
+			"avatar": "https://picsum.photos/seed/avatar/120/120",
+			"viewCount": 21000,
+			"updatedAt": "2026-05-01 11:00:00",
+			"sort": 1,
+			"package": {
+				"title": "男生汉服（景德镇站）",
+				"scene": "单独妆造399，周边拍摄899。",
+				"service": "资深摄影师、化妆师全程一对一服务",
+				"shooting": "底片：30张\n精修：9张",
+				"clothing": "提供服装：1套",
+				"remark": ""
+			}
+		},
+		{
+			"id": "md1",
+			"seriesId": "modern",
+			"name": "现代写真（景德镇站）",
+			"cover": "https://picsum.photos/seed/md1a/600/800",
+			"images": [
+				"https://picsum.photos/seed/md1a/600/800"
+			],
+			"gallery": [
+				"https://picsum.photos/seed/md1a/600/800"
+			],
+			"avatar": "https://picsum.photos/seed/avatar/120/120",
+			"viewCount": 18000,
+			"updatedAt": "2026-04-20 16:00:00",
+			"sort": 1,
+			"package": {
+				"title": "现代写真（景德镇站）",
+				"scene": "单独妆造399，周边拍摄899。",
+				"service": "资深摄影师、化妆师全程一对一服务",
+				"shooting": "底片：30张\n精修：9张",
+				"clothing": "提供服装：1套",
+				"remark": ""
+			}
+		}
+	],
+	"store": {
+		"enabled": false,
+		"city": "景德镇门店",
+		"title": "景德镇门店信息",
+		"address": "江苏省景德镇市姑苏区东中市姑苏创意产业园9栋101椿屿影像",
+		"guidance": [],
+		"environment": [
+			"https://picsum.photos/seed/env1/600/600",
+			"https://picsum.photos/seed/env2/600/600",
+			"https://picsum.photos/seed/env3/600/600",
+			"https://picsum.photos/seed/env4/600/600",
+			"https://picsum.photos/seed/env5/600/600",
+			"https://picsum.photos/seed/env6/600/600"
+		]
+	},
+	"social": {
+		"enabled": false,
+		"xhs": {
+			"name": "小红书",
+			"account": "椿屿影像",
+			"id": "ID: 952812345",
+			"qrcode": "https://picsum.photos/seed/xhsqr/300/300",
+			"avatar": "https://picsum.photos/seed/xhsav/120/120",
+			"banner": "https://picsum.photos/seed/xhsbn/600/200"
+		},
+		"douyin": {
+			"name": "抖音",
+			"account": "@椿屿影像（景德镇店）",
+			"id": "抖音号: 123456789",
+			"qrcode": "https://picsum.photos/seed/dyqr/400/400",
+			"avatar": "https://picsum.photos/seed/dyav/120/120"
+		}
+	}
+}

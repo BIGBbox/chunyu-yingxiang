@@ -1,0 +1,14 @@
+node_modules/
+miniprogram_npm/
+.DS_Store
+*.log
+project.private.config.json
+
+# AI tool local caches (keep CLAUDE.md / .cursor/rules in repo)
+.claude/
+
+# Local COS credentials for tools/cos-ping.js (never commit)
+tools/cos.local.json
+
+# SCF 机密（appsecret / COS 密钥），保留 config.example.js
+scf/*/config.js

@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="form-card">
+    <view class="switch-row">
+      <view class="switch-label">
+        <view class="switch-title">首页展示门店信息</view>
+        <view class="switch-sub">与小红书、抖音互不影响。拨动后立即保存到 COS。</view>
+      </view>
+      <switch checked="{{form.enabled}}" color="#6a4dff" bindchange="onToggleEnabled" />
+    </view>
+
+    <view class="label">门店城市标题</view>
+    <input class="input" data-field="city" value="{{form.city}}" bindinput="onInput" />
+    <view class="label">页面标题</view>
+    <input class="input" data-field="title" value="{{form.title}}" bindinput="onInput" />
+    <view class="label">详细地址</view>
+    <textarea class="textarea" data-field="address" value="{{form.address}}" bindinput="onInput" auto-height />
+    <view class="label">门店指引图</view>
+    <view class="img-grid">
+      <view class="img-item" wx:for="{{form.guidance}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" />
+        <view class="rm" data-index="{{index}}" bindtap="onRemoveGuide">×</view>
+      </view>
+      <view class="upload-tile" bindtap="onUploadGuide">+</view>
+    </view>
+    <view class="label">门店环境图</view>
+    <view class="img-grid">
+      <view class="img-item" wx:for="{{form.environment}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" />
+        <view class="rm" data-index="{{index}}" bindtap="onRemoveEnv">×</view>
+      </view>
+      <view class="upload-tile" bindtap="onUploadEnv">+</view>
+    </view>
+  </view>
+  <view class="footer-btns">
+    <view class="btn primary" bindtap="onSave">保存到 COS</view>
+  </view>
+</view>

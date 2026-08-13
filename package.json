@@ -1,0 +1,17 @@
+{
+  "name": "chunyu-yingxiang",
+  "version": "1.0.3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cos:ping": "node tools/cos-ping.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cos-nodejs-sdk-v5": "^2.15.4",
+    "cos-wx-sdk-v5": "^1.8.0"
+  }
+}

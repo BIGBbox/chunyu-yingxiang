@@ -1,0 +1,38 @@
+<view class="page safe-bottom">
+  <view class="block">
+    <view class="block-title">门店位置</view>
+    <view class="block-sub">{{store.city}}</view>
+    <view class="card">
+      <view class="addr-label">地址</view>
+      <view class="addr-text">{{store.address}}</view>
+      <view class="copy-btn" bindtap="onCopyAddress">复制地址</view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="block-title">门店指引</view>
+    <view class="block-sub">到店路线、停车入口、前台位置等指引素材</view>
+    <view class="card card--empty" wx:if="{{!store.guidance.length}}">
+      <text class="empty-tip">暂无门店指引素材</text>
+    </view>
+    <view class="card" wx:else>
+      <image wx:for="{{store.guidance}}" wx:key="*this" class="guide-img" src="{{item}}" mode="widthFix" />
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="block-title">门店环境</view>
+    <view class="block-sub">前台、化妆区、拍摄区实景</view>
+    <view class="env-grid">
+      <image
+        wx:for="{{store.environment}}"
+        wx:key="*this"
+        class="env-img"
+        src="{{item}}"
+        mode="aspectFill"
+        data-url="{{item}}"
+        bindtap="onPreviewEnv"
+      />
+    </view>
+  </view>
+</view>

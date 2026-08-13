@@ -1,0 +1,45 @@
+<view class="page" wx:if="{{!loading && detail}}">
+  <view class="meta">
+    <image class="avatar" src="{{detail.avatar || detail.cover}}" mode="aspectFill" />
+    <text class="meta-time">{{updatedText}}</text>
+    <view class="meta-views">
+      <text class="eye">👁</text>
+      <text>{{detail.viewCount}}</text>
+    </view>
+  </view>
+
+  <swiper
+    class="hero-swiper"
+    indicator-dots
+    indicator-color="rgba(255,255,255,0.45)"
+    indicator-active-color="#ffffff"
+    autoplay
+    circular
+    interval="4000"
+  >
+    <swiper-item wx:for="{{detail.images}}" wx:key="*this">
+      <image class="hero-img" src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="onPreviewSwiper" />
+    </swiper-item>
+  </swiper>
+
+  <view class="pkg">
+    <view class="pkg-row" wx:for="{{packageRows}}" wx:key="label">
+      <text class="pkg-label">{{item.label}}</text>
+      <text class="pkg-value">{{item.value}}</text>
+    </view>
+  </view>
+
+  <view class="gallery">
+    <image
+      wx:for="{{detail.gallery}}"
+      wx:key="*this"
+      class="gallery-img"
+      src="{{item}}"
+      mode="widthFix"
+      lazy-load
+      data-url="{{item}}"
+      bindtap="onPreviewGallery"
+    />
+  </view>
+</view>
+<view class="loading" wx:if="{{loading}}">加载中...</view>

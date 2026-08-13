@@ -1,0 +1,33 @@
+---
+description: 椿屿影像小程序 + 腾讯云 COS 方案的项目约定
+alwaysApply: true
+---
+
+# wxtool · COS 小程序约定
+
+## 项目是什么
+
+微信小程序「椿屿影像」：系列 / 客片详情 / 门店 / 社交。  
+**图片与文案存腾讯云 COS**，不依赖微信云开发付费套餐。
+
+## 架构红线
+
+- 游客端：只读公网 URL（`wx.request` / `<image>`），**不要**在游客路径引入密钥
+- 管理端：首页标题连点进入；多套配置仅存本机 `wx.Storage`（`cos_admin_profiles`，激活项同步旧 key `cos_admin_conf`）
+- 游客端只认 `config.js` 的 `baseUrl`（Storage 里的值只对管理员本机生效），改动这块要同时提示"需重新发布版本"
+- 管理员鉴权走腾讯云 SCF（`scf/adminAuth`）：`code2session` + openid 白名单；校验成功后自动把 SCF 的 COS 写入本机，无需手填；`appsecret`/默认 COS 密钥只在 SCF 端（`scf/*/config.js` gitignore）
+- **禁止**把密钥（含 `appsecret`）写进 `config.js`、源码、注释或提交到 Git
+
+## 改 COS 相关行为时优先看
+
+- `utils/cos.js` — 凭证、上传、写 `content.json`
+- `utils/api.js` — 优先 COS、失败回退本地
+- `config.js` — 静态 `baseUrl` / `contentPath` / `adminAuth.apiUrl`
+- `utils/admin.js` — 管理员鉴权与默认配置导入
+- `docs/COS上手.md` — 建桶与对接步骤；`scf/adminAuth/README.md` — SCF 部署
+
+## 编码约定
+
+- 保持现有小程序目录与中文注释风格
+- 不做无关大重构；不引入 STS 后端除非用户明确要求
+- 对象路径沿用：`data/content.json`，以及 `series/`、`styles/`、`store/`、`social/` 前缀

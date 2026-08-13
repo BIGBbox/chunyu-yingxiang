@@ -1,0 +1,7 @@
+const fs = require('fs')
+const path = require('path')
+const jsonPath = path.join(__dirname, '../data/content.json')
+const jsPath = path.join(__dirname, '../data/content.js')
+const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'))
+fs.writeFileSync(jsPath, `module.exports = ${JSON.stringify(data, null, '\t')}\n`)
+console.log('synced content.js, store.enabled=', data.store.enabled, 'social.enabled=', data.social.enabled)

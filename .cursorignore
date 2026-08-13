@@ -1,0 +1,13 @@
+# Dependencies & generated
+node_modules/
+miniprogram_npm/
+
+# Logs & OS
+*.log
+.DS_Store
+
+# WeChat private local config
+project.private.config.json
+
+# Large vendored SDK (business logic is in utils/cos.js)
+libs/cos-wx-sdk-v5.js

@@ -1,0 +1,60 @@
+<view class="page">
+  <block wx:if="{{mode === 'list'}}">
+    <view class="pref-card">
+      <view class="switch-row">
+        <view class="switch-label">
+          <view class="switch-title">删除系列时同时删除客片</view>
+          <view class="switch-sub">默认关闭：只删系列，其下客片变为「未归类」。开启后会一并删除客片。</view>
+        </view>
+        <switch checked="{{deleteStylesWithSeries}}" bindchange="onToggleDeleteStyles" color="#6a4dff" />
+      </view>
+    </view>
+    <view class="toolbar"><view class="add-btn" bindtap="onCreate">+ 新建系列</view></view>
+    <view class="list-card" wx:for="{{series}}" wx:key="id">
+      <view class="list-main" data-id="{{item.id}}" bindtap="onEdit">
+        <image class="thumb" src="{{item.cover}}" mode="aspectFill" />
+        <view class="list-body">
+          <view class="list-name">
+            {{item.name}}
+            <text class="badge-hide" wx:if="{{item.hidden}}">已隐藏</text>
+          </view>
+          <view class="list-sub">排序 {{item.sort}}{{item.hot ? ' · 热门' : ''}}</view>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <text class="op-del" data-id="{{item.id}}" catchtap="onDelete">删除</text>
+    </view>
+  </block>
+  <block wx:else>
+    <view class="form-card">
+      <view class="label">系列名称</view>
+      <input class="input" data-field="name" value="{{form.name}}" bindinput="onInput" />
+      <view class="label">排序</view>
+      <input class="input" type="number" data-field="sort" value="{{form.sort}}" bindinput="onInput" />
+      <view class="switch-row">
+        <view class="switch-label">
+          <view class="switch-title">热门</view>
+          <view class="switch-sub">仅作标记，不影响首页是否展示。</view>
+        </view>
+        <switch checked="{{form.hot}}" bindchange="onHotChange" color="#6a4dff" />
+      </view>
+      <view class="switch-row">
+        <view class="switch-label">
+          <view class="switch-title">从首页隐藏</view>
+          <view class="switch-sub">开启后游客端首页不显示该系列，客片仍保留。</view>
+        </view>
+        <switch checked="{{form.hidden}}" bindchange="onHiddenChange" color="#6a4dff" />
+      </view>
+      <view class="label">封面</view>
+      <view class="img-row">
+        <image wx:if="{{form.cover}}" class="cover" src="{{form.cover}}" mode="aspectFill" />
+        <view class="upload-btn" bindtap="onUploadCover">上传封面</view>
+      </view>
+      <view class="danger-link" wx:if="{{form.id}}" bindtap="onDelete">删除此系列</view>
+    </view>
+    <view class="footer-btns">
+      <view class="btn ghost" bindtap="onBack">返回</view>
+      <view class="btn primary" bindtap="onSave">保存到 COS</view>
+    </view>
+  </block>
+</view>
