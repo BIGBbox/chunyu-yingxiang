@@ -1,5 +1,5 @@
 <view class="page">
-  <view class="card">
+  <view class="card" wx:if="{{showCosPanels}}">
     <view class="title">COS 内容管理</view>
     <view class="stats">系列 {{seriesCount}} · 客片 {{styleCount}}</view>
     <view class="status {{configured ? 'ok' : 'bad'}}">
@@ -16,18 +16,7 @@
       config.js 的 baseUrl（{{guestBaseUrl}}）与当前配置不一致，其他用户读的是前者。
     </view>
 
-
     <view class="btn primary" bindtap="goSettings">查看 COS 状态</view>
-  </view>
-
-  <view class="card">
-    <view class="switch-row">
-      <view class="switch-label">
-        <view class="switch-title">游客端显示水印</view>
-        <view class="switch-sub">开启后 COS 图片按样式 watermark 处理；默认关闭。管理端编辑仍用原图。</view>
-      </view>
-      <switch checked="{{watermarkEnabled}}" color="#6a4dff" bindchange="onToggleWatermark" />
-    </view>
   </view>
 
   <view class="menu">
@@ -48,15 +37,35 @@
     </view>
     <view class="menu-item" bindtap="goEditSocial">
       <text class="menu-title">社交账号</text>
-      <text class="menu-sub">小红书、抖音可分别开关</text>
+      <text class="menu-sub">小红书、抖音社交账号</text>
       <text class="arrow">›</text>
     </view>
   </view>
 
-  <view class="card">
+  <view class="card" wx:if="{{showCosPanels}}">
     <view class="btn ghost" bindtap="onReload">从 COS 重新拉取</view>
     <view class="btn danger" bindtap="onUploadSeed">上传本地演示数据到 COS</view>
     <view class="btn primary" bindtap="onMigrateImages">迁移演示图片到 COS</view>
     <view class="hint">管理员登录成功后会自动写入 SCF 下发的 COS，一般不用手填。首次可上传演示数据，再迁移演示图片到桶。</view>
+  </view>
+
+  <view class="card">
+    <view class="switch-row">
+      <view class="switch-label">
+        <view class="switch-title">游客端显示水印</view>
+        <view class="switch-sub">开启后 COS 图片按样式 watermark 处理；默认关闭。管理端编辑仍用原图。</view>
+      </view>
+      <switch checked="{{watermarkEnabled}}" color="#6a4dff" bindchange="onToggleWatermark" />
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="switch-row">
+      <view class="switch-label">
+        <view class="switch-title">显示 COS 管理卡片</view>
+        <view class="switch-sub">默认关闭。开启后显示 COS 状态与同步/迁移操作，拨动即时生效。</view>
+      </view>
+      <switch checked="{{showCosPanels}}" color="#6a4dff" bindchange="onToggleCosPanels" />
+    </view>
   </view>
 </view>

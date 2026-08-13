@@ -2,6 +2,21 @@ const cosUtil = require('../../utils/cos')
 const api = require('../../utils/api')
 const admin = require('../../utils/admin')
 
+const SHOW_COS_PANELS_KEY = 'admin_show_cos_panels'
+
+function switchOn(e) {
+  const v = e && e.detail ? e.detail.value : false
+  return v === true || v === 'true' || v === 1 || v === '1'
+}
+
+function readShowCosPanels() {
+  try {
+    return !!wx.getStorageSync(SHOW_COS_PANELS_KEY)
+  } catch (e) {
+    return false
+  }
+}
+
 Page({
   data: {
     configured: false,
@@ -16,7 +31,8 @@ Page({
     updatedAt: '',
     seriesCount: 0,
     styleCount: 0,
-    watermarkEnabled: false
+    watermarkEnabled: false,
+    showCosPanels: false
   },
 
   async onShow() {
@@ -35,6 +51,7 @@ Page({
         return
       }
     }
+    this.setData({ showCosPanels: readShowCosPanels() })
     this.refresh()
   },
 
@@ -68,6 +85,16 @@ Page({
     }
   },
 
+  onToggleCosPanels(e) {
+    const on = switchOn(e)
+    this.setData({ showCosPanels: on })
+    try {
+      wx.setStorageSync(SHOW_COS_PANELS_KEY, on)
+    } catch (err) {
+      /* ignore */
+    }
+  },
+
   goSettings() {
     wx.navigateTo({ url: '/pages/admin/settings' })
   },
@@ -89,7 +116,7 @@ Page({
   },
 
   onToggleWatermark(e) {
-    const enabled = !!e.detail.value
+    const enabled = switchOn(e)
     const prev = this.data.watermarkEnabled
     this.setData({ watermarkEnabled: enabled })
     if (!cosUtil.hasCosCredentials()) {

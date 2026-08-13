@@ -3,7 +3,7 @@
     <view class="switch-row">
       <view class="switch-label">
         <view class="switch-title">首页展示门店信息</view>
-        <view class="switch-sub">与小红书、抖音互不影响。拨动后立即保存到 COS。</view>
+        <!-- <view class="switch-sub">与小红书、抖音互不影响。拨动后立即保存到 COS。</view> -->
       </view>
       <switch checked="{{form.enabled}}" color="#6a4dff" bindchange="onToggleEnabled" />
     </view>

@@ -3,14 +3,14 @@
     <view class="switch-row">
       <view class="switch-label">
         <view class="switch-title">首页展示小红书</view>
-        <view class="switch-sub">与门店、抖音互不影响。拨动后立即保存到 COS。</view>
+        <!-- <view class="switch-sub">与门店、抖音互不影响。拨动后立即保存到 COS。</view> -->
       </view>
       <switch checked="{{xhsEnabled}}" data-key="xhs" color="#6a4dff" bindchange="onTogglePlatform" />
     </view>
     <view class="switch-row switch-row--split">
       <view class="switch-label">
         <view class="switch-title">首页展示抖音</view>
-        <view class="switch-sub">可只开其中一个。关闭后游客端不显示该账号。</view>
+        <!-- <view class="switch-sub">可只开其中一个。关闭后游客端不显示该账号。</view> -->
       </view>
       <switch checked="{{douyinEnabled}}" data-key="douyin" color="#6a4dff" bindchange="onTogglePlatform" />
     </view>
