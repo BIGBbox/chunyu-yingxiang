@@ -1,7 +1,6 @@
 name: 微信小程序 CI
 
 # 推送到 master（含 PR 合并）即上传微信；用 package.json 的 version 打 tag。
-# 是否提审由仓库根目录 mp-ci.config.json 的 submitAudit 控制（true=上传后提审，false/缺省=仅上传）。
 # 若同名 tag 已存在则直接失败，需先改 package.json 的 version 再推。
 on:
   push:
@@ -49,7 +48,6 @@ jobs:
 
           VER="$(node -p "require('./package.json').version")"
           TAG="v${VER}"
-          SUBMIT="$(node -p "(()=>{try{return require('./mp-ci.config.json').submitAudit===true}catch(e){return false}})()")"
 
           if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
             echo "::error::远程已存在 tag ${TAG}。请先修改 package.json 的 version 后再推送到 master。"
@@ -68,8 +66,7 @@ jobs:
           echo "version=$VER" >> "$GITHUB_OUTPUT"
           echo "desc=$DESC" >> "$GITHUB_OUTPUT"
           echo "robot=$ROBOT" >> "$GITHUB_OUTPUT"
-          echo "submit_audit=$SUBMIT" >> "$GITHUB_OUTPUT"
-          echo "resolved version=$VER tag=${TAG} submitAudit=${SUBMIT}"
+          echo "resolved version=$VER tag=${TAG}"
 
       - name: Upload to WeChat
         env:
@@ -84,20 +81,3 @@ jobs:
             exit 1
           fi
           node tools/mp-ci.js upload --version "$MP_VERSION" --desc "$MP_DESC" --robot "$MP_ROBOT"
-
-      - name: Submit audit
-        if: steps.meta.outputs.submit_audit == 'true'
-        env:
-          WX_APPID: ${{ secrets.WX_APPID }}
-          WX_APPSECRET: ${{ secrets.WX_APPSECRET }}
-          MP_DESC: ${{ steps.meta.outputs.desc }}
-        run: |
-          if [ -z "$WX_APPSECRET" ]; then
-            echo "缺少 Secrets.WX_APPSECRET，无法自动提审。请到仓库 Settings → Secrets 配置。"
-            exit 1
-          fi
-          node tools/mp-ci.js submit --desc "$MP_DESC"
-
-      - name: Skip audit
-        if: steps.meta.outputs.submit_audit != 'true'
-        run: echo "mp-ci.config.json submitAudit 未开启，仅上传体验版，不提审。"

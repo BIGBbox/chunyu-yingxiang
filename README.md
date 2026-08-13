@@ -25,7 +25,7 @@ npm install
 npm run cos:ping
 ```
 
-- **GitHub 自动上传**：推送到 `master`（或合并进 master）即触发；用 `package.json` 的 version 打 tag，tag 已存在则失败。是否自动提审由 `mp-ci.config.json` 的 `submitAudit` 控制。见 [docs/微信CI.md](docs/微信CI.md)。
+- **GitHub 自动上传**：推送到 `master` 即触发；用 `package.json` 的 version 打 tag，tag 已存在则失败。提审/发布需在公众平台手动操作。见 [docs/微信CI.md](docs/微信CI.md)。
 
 ## 配置
 
