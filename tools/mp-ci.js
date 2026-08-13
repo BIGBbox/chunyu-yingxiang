@@ -89,7 +89,7 @@ async function doUpload(opts) {
   if (!appid) throw new Error('缺少 appid')
   const version = String(opts.version || process.env.MP_VERSION || defaultVersion())
   const desc = String(
-    opts.desc || process.env.MP_DESC || `ci upload ${version} @ ${new Date().toISOString()}`
+    opts.desc || process.env.MP_DESC || `ci upload ${new Date().toISOString().slice(0, 19)}`
   )
   const robot = Number(opts.robot || process.env.MP_ROBOT || 1) || 1
 

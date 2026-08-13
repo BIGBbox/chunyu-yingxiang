@@ -59,14 +59,27 @@ jobs:
           git tag "${TAG}"
           git push origin "${TAG}"
 
-          DESC="ci ${VER} (${GITHUB_SHA::7})"
+          # 上传备注：用提交说明（不含版本号，版本号在微信后台另有展示）
+          SUBJECT="$(git log -1 --pretty=%s)"
+          if git rev-parse -q --verify HEAD^2 >/dev/null 2>&1; then
+            SUBJECT="$(git log -1 --pretty=%s HEAD^2)"
+          fi
+          DESC="$(printf '%s' "$SUBJECT" | tr '\n\r' ' ' | sed 's/[[:space:]]\+/ /g' | cut -c1-80)"
+          if [ -z "$DESC" ]; then
+            DESC="update ${GITHUB_SHA::7}"
+          fi
+
           ROBOT="${{ github.event.inputs.robot }}"
           if [ -z "$ROBOT" ]; then ROBOT=1; fi
 
           echo "version=$VER" >> "$GITHUB_OUTPUT"
-          echo "desc=$DESC" >> "$GITHUB_OUTPUT"
+          {
+            echo "desc<<MPDESC"
+            printf '%s\n' "$DESC"
+            echo "MPDESC"
+          } >> "$GITHUB_OUTPUT"
           echo "robot=$ROBOT" >> "$GITHUB_OUTPUT"
-          echo "resolved version=$VER tag=${TAG}"
+          echo "resolved version=$VER tag=${TAG} desc=${DESC}"
 
       - name: Upload to WeChat
         env:

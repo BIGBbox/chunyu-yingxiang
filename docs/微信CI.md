@@ -13,7 +13,7 @@ push / merge → master
   → 读 package.json version
   → 若已有同名 tag → 失败退出
   → 创建并推送 tag
-  → miniprogram-ci 上传
+  → miniprogram-ci 上传（备注取最近提交说明，不含版本号）
 ```
 
 ## 一、微信后台准备
