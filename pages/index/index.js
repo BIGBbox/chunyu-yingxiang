@@ -1,6 +1,7 @@
 const api = require('../../utils/api')
 const admin = require('../../utils/admin')
 const cosUtil = require('../../utils/cos')
+const share = require('../../utils/share')
 const { adminTapCount } = require('../../config')
 
 Page({
@@ -19,6 +20,7 @@ Page({
   _titleTapTimer: null,
 
   onLoad() {
+    share.syncShareMenu()
     this.loadHome()
   },
 
@@ -29,6 +31,7 @@ Page({
   /** app.onShow 静默刷新到新数据后回调 */
   onContentUpdated() {
     this.loadHome()
+    share.syncShareMenu()
   },
 
   async loadHome() {
@@ -155,5 +158,24 @@ Page({
     } finally {
       this._entering = false
     }
+  },
+
+  onShareAppMessage() {
+    const list = this.data.seriesList || []
+    const cover = (list[0] && list[0].cover) || ''
+    return share.buildShareAppMessage({
+      title: '椿屿影像 · 热门客片',
+      path: '/pages/index/index',
+      imageUrl: cover
+    })
+  },
+
+  onShareTimeline() {
+    const list = this.data.seriesList || []
+    const cover = (list[0] && list[0].cover) || ''
+    return share.buildShareTimeline({
+      title: '椿屿影像 · 热门客片',
+      imageUrl: cover
+    })
   }
 })

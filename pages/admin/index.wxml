@@ -57,6 +57,13 @@
       </view>
       <switch checked="{{watermarkEnabled}}" color="#6a4dff" bindchange="onToggleWatermark" />
     </view>
+    <view class="switch-row" style="margin-top: 24rpx; padding-top: 24rpx; border-top: 1rpx solid #eee;">
+      <view class="switch-label">
+        <view class="switch-title">允许转发 / 分享</view>
+        <view class="switch-sub">关闭后右上角「转发」「分享到朋友圈」会隐藏；默认开启。改完无需重新发版。</view>
+      </view>
+      <switch checked="{{shareEnabled}}" color="#6a4dff" bindchange="onToggleShare" />
+    </view>
   </view>
 
   <view class="card">

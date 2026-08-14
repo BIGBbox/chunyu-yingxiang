@@ -32,6 +32,7 @@ Page({
     seriesCount: 0,
     styleCount: 0,
     watermarkEnabled: false,
+    shareEnabled: true,
     showCosPanels: false
   },
 
@@ -78,7 +79,11 @@ Page({
         seriesCount: (data.series || []).length,
         styleCount: (data.styles || []).length,
         updatedAt: data.updatedAt || '',
-        watermarkEnabled: !!(data.settings && data.settings.watermarkEnabled)
+        watermarkEnabled: !!(data.settings && data.settings.watermarkEnabled),
+        shareEnabled:
+          !data.settings || data.settings.shareEnabled == null
+            ? true
+            : !!data.settings.shareEnabled
       })
     } catch (e) {
       /* ignore */
@@ -137,6 +142,33 @@ Page({
       })
       .catch((err) => {
         this.setData({ watermarkEnabled: prev })
+        wx.hideLoading()
+        wx.showToast({ title: (err && err.message) || '保存失败', icon: 'none' })
+      })
+  },
+
+  onToggleShare(e) {
+    const enabled = switchOn(e)
+    const prev = this.data.shareEnabled
+    this.setData({ shareEnabled: enabled })
+    if (!cosUtil.hasCosCredentials()) {
+      this.setData({ shareEnabled: prev })
+      wx.showToast({ title: '请先配置 COS', icon: 'none' })
+      return
+    }
+    wx.showLoading({ title: '保存中', mask: true })
+    api
+      .getAll()
+      .then((all) => {
+        all.settings = { ...(all.settings || {}), shareEnabled: enabled }
+        return api.saveAll(all)
+      })
+      .then(() => {
+        wx.hideLoading()
+        wx.showToast({ title: enabled ? '已开启分享' : '已关闭分享', icon: 'success' })
+      })
+      .catch((err) => {
+        this.setData({ shareEnabled: prev })
         wx.hideLoading()
         wx.showToast({ title: (err && err.message) || '保存失败', icon: 'none' })
       })

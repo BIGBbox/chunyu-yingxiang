@@ -1,9 +1,11 @@
 const api = require('../../utils/api')
+const share = require('../../utils/share')
 
 Page({
   data: { store: { city: '', address: '', guidance: [], environment: [] } },
 
   onLoad() {
+    share.syncShareMenu()
     this.load()
   },
 
@@ -19,6 +21,7 @@ Page({
   /** app.onShow 静默刷新到新数据后回调 */
   onContentUpdated() {
     this.load()
+    share.syncShareMenu()
   },
 
   onCopyAddress() {
@@ -34,6 +37,23 @@ Page({
     wx.previewImage({
       current: e.currentTarget.dataset.url,
       urls: this.data.store.environment || []
+    })
+  },
+
+  onShareAppMessage() {
+    const env = (this.data.store && this.data.store.environment) || []
+    return share.buildShareAppMessage({
+      title: '椿屿影像 · 门店地址',
+      path: '/pages/store/store',
+      imageUrl: env[0] || ''
+    })
+  },
+
+  onShareTimeline() {
+    const env = (this.data.store && this.data.store.environment) || []
+    return share.buildShareTimeline({
+      title: '椿屿影像 · 门店地址',
+      imageUrl: env[0] || ''
     })
   }
 })

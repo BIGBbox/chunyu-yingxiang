@@ -71,7 +71,12 @@ function normalize(raw) {
     },
     settings: {
       // 游客端是否用 COS 样式 watermark 展示图片；默认关闭
-      watermarkEnabled: !!(data.settings && data.settings.watermarkEnabled)
+      watermarkEnabled: !!(data.settings && data.settings.watermarkEnabled),
+      // 右上角转发/朋友圈；缺省或未写时默认开启
+      shareEnabled:
+        !data.settings || data.settings.shareEnabled == null
+          ? true
+          : flagOn(data.settings.shareEnabled)
     }
   }
 }
