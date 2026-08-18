@@ -1,62 +1,109 @@
 const api = require('../../utils/api')
 const share = require('../../utils/share')
 
+/** 把封面缩成小图再拉满，形成模糊背景（小程序 CSS filter 对 image 经常无效） */
+function makeBlurPath(src) {
+  if (!src) return Promise.resolve('')
+  return new Promise((resolve) => {
+    wx.getImageInfo({
+      src,
+      success: (info) => {
+        try {
+          const w = 48
+          const h = 48
+          const canvas = wx.createOffscreenCanvas({ type: '2d', width: w, height: h })
+          const ctx = canvas.getContext('2d')
+          const img = canvas.createImage()
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0, w, h)
+            wx.canvasToTempFilePath({
+              canvas,
+              destWidth: w,
+              destHeight: h,
+              fileType: 'jpg',
+              quality: 0.5,
+              success: (r) => resolve(r.tempFilePath || src),
+              fail: () => resolve(src)
+            })
+          }
+          img.onerror = () => resolve(src)
+          img.src = info.path
+        } catch (e) {
+          resolve(src)
+        }
+      },
+      fail: () => resolve(src)
+    })
+  })
+}
+
 Page({
   data: {
     seriesId: '',
-    keyword: '',
-    styleCount: 0,
     filtered: [],
     seriesName: '',
-    shareCover: ''
+    studioName: '椿屿影像',
+    shareCover: '',
+    blurCover: '',
+    statusBarHeight: 20,
+    shareSheetVisible: false,
+    refreshing: false
   },
 
   onLoad(options) {
     share.syncShareMenu()
-    const kw = options.keyword ? decodeURIComponent(options.keyword) : ''
-    this.setData({ seriesId: options.id, keyword: kw })
-    this.load(options.id, kw)
+    const sys = wx.getSystemInfoSync()
+    this.setData({
+      seriesId: options.id || '',
+      statusBarHeight: sys.statusBarHeight || 20
+    })
+    this.load(options.id)
   },
 
-  async load(seriesId, keyword) {
+  async load(seriesId) {
     try {
-      const data = await api.getStylesBySeries(seriesId, keyword)
-      const seriesName = (data.series && data.series.name) || '椿屿影像'
+      const home = await api.getHome()
+      const data = await api.getStylesBySeries(seriesId)
+      const seriesName = (data.series && data.series.name) || '作品'
       const styles = data.styles || []
-      wx.setNavigationBarTitle({ title: seriesName })
+      const studioName = (home.studio && home.studio.name) || '椿屿影像'
+      const shareCover =
+        (data.series && data.series.cover) || (styles[0] && styles[0].cover) || ''
+      const coverChanged = shareCover !== this.data.shareCover
       this.setData({
         filtered: styles,
-        styles,
-        styleCount: data.styleCount || 0,
         seriesName,
-        shareCover: (data.series && data.series.cover) || (styles[0] && styles[0].cover) || ''
+        studioName,
+        shareCover,
+        blurCover: coverChanged ? shareCover : this.data.blurCover || shareCover
       })
+      // 封面没变就不要重做模糊，避免下拉刷新时顶部闪一下
+      if (shareCover && coverChanged) {
+        makeBlurPath(shareCover).then((blurCover) => {
+          if (blurCover) this.setData({ blurCover })
+        })
+      }
     } catch (e) {
       wx.showToast({ title: e.message || '加载失败', icon: 'none' })
     }
   },
 
-  /** app.onShow 静默刷新到新数据后回调 */
   onContentUpdated() {
-    this.load(this.data.seriesId, this.data.keyword)
+    this.load(this.data.seriesId)
     share.syncShareMenu()
   },
 
-  onKeywordInput(e) {
-    this.setData({ keyword: e.detail.value })
+  onRefresh() {
+    this.setData({ refreshing: true })
+    this.load(this.data.seriesId).finally(() => {
+      this.setData({ refreshing: false })
+    })
   },
 
-  onSearch() {
-    const kw = this.data.keyword.trim()
-    const filtered = kw
-      ? (this.data.styles || []).filter((s) => s.name.includes(kw))
-      : this.data.styles || []
-    this.setData({ filtered })
-    if (kw && !filtered.length) wx.showToast({ title: '未找到相关样式', icon: 'none' })
-  },
-
-  onImageSearch() {
-    wx.showToast({ title: '图片搜索功能开发中', icon: 'none' })
+  onBack() {
+    wx.navigateBack({
+      fail: () => wx.reLaunch({ url: '/pages/index/index' })
+    })
   },
 
   onStyleTap(e) {
@@ -65,13 +112,37 @@ Page({
     })
   },
 
+  onOpenShare() {
+    this.setData({ shareSheetVisible: true })
+  },
+
+  onCloseShare() {
+    this.setData({ shareSheetVisible: false })
+  },
+
+  onShareMoments() {
+    this.setData({ shareSheetVisible: false })
+    const id = this.data.seriesId
+    if (!id || !this.data.shareCover) {
+      wx.showToast({ title: '暂无作品封面', icon: 'none' })
+      return
+    }
+    wx.navigateTo({
+      url: `/pages/poster/select?mode=moments&from=series&id=${encodeURIComponent(id)}`
+    })
+  },
+
+  noop() {},
+
+  _shareTitle() {
+    return `${this.data.studioName || '椿屿影像'}的作品`
+  },
+
   onShareAppMessage() {
+    if (this.data.shareSheetVisible) this.setData({ shareSheetVisible: false })
     const id = this.data.seriesId || ''
-    const title = this.data.seriesName
-      ? `椿屿影像 · ${this.data.seriesName}`
-      : '椿屿影像'
     return share.buildShareAppMessage({
-      title,
+      title: this._shareTitle(),
       path: id ? `/pages/series/series?id=${id}` : '/pages/index/index',
       imageUrl: this.data.shareCover
     })
@@ -79,11 +150,8 @@ Page({
 
   onShareTimeline() {
     const id = this.data.seriesId || ''
-    const title = this.data.seriesName
-      ? `椿屿影像 · ${this.data.seriesName}`
-      : '椿屿影像'
     return share.buildShareTimeline({
-      title,
+      title: this._shareTitle(),
       query: id ? `id=${id}` : '',
       imageUrl: this.data.shareCover
     })

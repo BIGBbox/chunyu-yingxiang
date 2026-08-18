@@ -1,28 +1,13 @@
 <view class="page">
-  <view class="card" wx:if="{{showCosPanels}}">
-    <view class="title">COS 内容管理</view>
-    <view class="stats">系列 {{seriesCount}} · 客片 {{styleCount}}</view>
-    <view class="status {{configured ? 'ok' : 'bad'}}">
-      {{configured ? '当前配置：' + profileName : '尚未同步 COS（管理员登录后会自动写入）'}}
-      <text wx:if="{{profileCount > 1}}">（共 {{profileCount}} 套）</text>
-    </view>
-    <view class="url" wx:if="{{baseUrl}}">{{baseUrl}}</view>
-    <view class="url" wx:if="{{updatedAt}}">数据更新时间：{{updatedAt}}</view>
-
-    <view class="alert" wx:if="{{!guestReady}}">
-      其他用户看不到你的更新：config.js 的 baseUrl 仍是占位值（{{guestBaseUrl || '空'}}），需改成真实域名并重新发布小程序。
-    </view>
-    <view class="alert" wx:elif="{{guestMismatch}}">
-      config.js 的 baseUrl（{{guestBaseUrl}}）与当前配置不一致，其他用户读的是前者。
-    </view>
-
-    <view class="btn primary" bindtap="goSettings">查看 COS 状态</view>
-  </view>
-
   <view class="menu">
-    <view class="menu-item" bindtap="goEditStyle">
-      <text class="menu-title">客片管理</text>
-      <text class="menu-sub">上传轮播/详情图、编辑套餐文案</text>
+    <view class="menu-item" bindtap="goEditHome">
+      <text class="menu-title">首页封面与工作室</text>
+      <text class="menu-sub">5 槽封面图/视频、介绍、标签、电话与位置</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goEditFeeds">
+      <text class="menu-title">动态管理</text>
+      <text class="menu-sub">文案与九宫格图片</text>
       <text class="arrow">›</text>
     </view>
     <view class="menu-item" bindtap="goEditSeries">
@@ -35,18 +20,6 @@
       <text class="menu-sub">展示开关、地址、环境图</text>
       <text class="arrow">›</text>
     </view>
-    <view class="menu-item" bindtap="goEditSocial">
-      <text class="menu-title">社交账号</text>
-      <text class="menu-sub">小红书、抖音社交账号</text>
-      <text class="arrow">›</text>
-    </view>
-  </view>
-
-  <view class="card" wx:if="{{showCosPanels}}">
-    <view class="btn ghost" bindtap="onReload">从 COS 重新拉取</view>
-    <view class="btn danger" bindtap="onUploadSeed">上传本地演示数据到 COS</view>
-    <view class="btn primary" bindtap="onMigrateImages">迁移演示图片到 COS</view>
-    <view class="hint">管理员登录成功后会自动写入 SCF 下发的 COS，一般不用手填。首次可上传演示数据，再迁移演示图片到桶。</view>
   </view>
 
   <view class="card">
@@ -63,16 +36,6 @@
         <view class="switch-sub">关闭后右上角「转发」「分享到朋友圈」会隐藏；默认开启。改完无需重新发版。</view>
       </view>
       <switch checked="{{shareEnabled}}" color="#6a4dff" bindchange="onToggleShare" />
-    </view>
-  </view>
-
-  <view class="card">
-    <view class="switch-row">
-      <view class="switch-label">
-        <view class="switch-title">显示 COS 管理卡片</view>
-        <view class="switch-sub">默认关闭。开启后显示 COS 状态与同步/迁移操作，拨动即时生效。</view>
-      </view>
-      <switch checked="{{showCosPanels}}" color="#6a4dff" bindchange="onToggleCosPanels" />
     </view>
   </view>
 </view>

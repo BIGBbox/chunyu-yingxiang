@@ -1,0 +1,42 @@
+<view class="page">
+  <view class="page-title">选择照片以生成名片</view>
+
+  <view class="photo-grid">
+    <view
+      class="photo-item {{selectedId === item.id ? 'on' : ''}}"
+      wx:for="{{photos}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onSelect"
+    >
+      <image class="photo-img" src="{{item.url}}" mode="aspectFill" />
+      <view class="photo-check" wx:if="{{selectedId === item.id}}">✓</view>
+      <view class="photo-badge" wx:if="{{item.from === 'album'}}">相册</view>
+    </view>
+    <view class="photo-item photo-add" wx:if="{{allowAlbum}}" bindtap="onPickAlbum">
+      <text class="photo-add-plus">+</text>
+      <text class="photo-add-text">从相册选择</text>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!photos.length && allowAlbum}}">暂无可选封面，请从相册选择或先在管理端上传封面</view>
+  <view class="empty" wx:if="{{!photos.length && !allowAlbum}}">暂无可选封面，请先在管理端上传首页封面</view>
+
+  <!-- 离屏 canvas -->
+  <canvas type="2d" id="posterCanvas" class="poster-canvas" />
+
+  <view class="footer">
+    <view class="gen-btn {{!selectedId ? 'disabled' : ''}}" bindtap="onGenerate">立即生成</view>
+  </view>
+
+  <!-- 预览弹层 -->
+  <view class="preview-mask" wx:if="{{previewVisible}}" catchtouchmove="noop">
+    <view class="preview-card">
+      <image class="preview-img" src="{{previewPath}}" mode="widthFix" />
+    </view>
+    <view class="preview-actions">
+      <view class="preview-btn discard" bindtap="onDiscard">放弃</view>
+      <view class="preview-btn save" bindtap="onSaveAlbum">保存到相册</view>
+    </view>
+  </view>
+</view>

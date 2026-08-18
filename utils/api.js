@@ -42,6 +42,74 @@ function normalizePlatform(raw, legacyOn) {
   }
 }
 
+function emptyCover() {
+  return { type: 'image', url: '', poster: '' }
+}
+
+/** 封面固定 5 槽；空槽保留便于管理端编辑 */
+function normalizeCovers(list) {
+  const src = Array.isArray(list) ? list.slice(0, 5) : []
+  const out = []
+  for (let i = 0; i < 5; i++) {
+    const item = src[i]
+    if (!item || typeof item !== 'object') {
+      out.push(emptyCover())
+      continue
+    }
+    out.push({
+      type: item.type === 'video' ? 'video' : 'image',
+      url: item.url || '',
+      poster: item.poster || ''
+    })
+  }
+  return out
+}
+
+function normalizeStudio(raw) {
+  const s = raw && typeof raw === 'object' ? raw : {}
+  const tags = Array.isArray(s.tags)
+    ? s.tags.map((t) => String(t || '').replace(/^#/, '').trim()).filter(Boolean)
+    : []
+  const lat = Number(s.latitude)
+  const lng = Number(s.longitude)
+  return {
+    name: s.name || '椿屿影像',
+    intro: s.intro || '',
+    tags,
+    phone: s.phone ? String(s.phone).trim() : '',
+    latitude: Number.isFinite(lat) ? lat : 0,
+    longitude: Number.isFinite(lng) ? lng : 0,
+    address: s.address || '',
+    oaLink: s.oaLink ? String(s.oaLink).trim() : '',
+    avatar: s.avatar ? String(s.avatar).trim() : '',
+    wxacode: s.wxacode ? String(s.wxacode).trim() : ''
+  }
+}
+
+function normalizeFeeds(list) {
+  return (Array.isArray(list) ? list : [])
+    .map((f, i) => {
+      if (!f || typeof f !== 'object') return null
+      return {
+        id: f.id || `feed_${i}`,
+        text: f.text || '',
+        images: Array.isArray(f.images) ? f.images.filter(Boolean).slice(0, 9) : [],
+        sort: f.sort != null ? Number(f.sort) || 0 : i + 1
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => (a.sort || 0) - (b.sort || 0))
+}
+
+function normalizeHome(raw) {
+  const h = raw && typeof raw === 'object' ? raw : {}
+  return {
+    covers: normalizeCovers(h.covers),
+    studio: normalizeStudio(h.studio),
+    feeds: normalizeFeeds(h.feeds)
+  }
+}
+
 function normalize(raw) {
   const data = raw || {}
   const storeRaw = data.store || {}
@@ -51,6 +119,7 @@ function normalize(raw) {
   const douyin = normalizePlatform(socialRaw.douyin, legacySocialOn)
   return {
     updatedAt: data.updatedAt || '',
+    home: normalizeHome(data.home),
     series: (data.series || []).slice().sort((a, b) => (a.sort || 0) - (b.sort || 0)),
     styles: (data.styles || []).slice().sort((a, b) => (a.sort || 0) - (b.sort || 0)),
     store: {
@@ -155,7 +224,7 @@ function mapUrlList(list) {
   return (list || []).map((u) => mapImageUrl(u))
 }
 
-/** 游客展示：开启水印时给 COS 原图 URL 追加样式名 watermark */
+/** 游客展示：开启水印时给 COS 原图 URL 追加样式名 watermark（视频封面 poster 同样处理） */
 function forDisplay(data) {
   if (!data || !data.settings || !data.settings.watermarkEnabled) return data
   const next = clone(data)
@@ -168,6 +237,23 @@ function forDisplay(data) {
     if (style.images) style.images = mapUrlList(style.images)
     if (style.gallery) style.gallery = mapUrlList(style.gallery)
   })
+  if (next.home) {
+    if (next.home.covers) {
+      next.home.covers = next.home.covers.map((c) => {
+        if (!c) return c
+        if (c.type === 'video') {
+          return { ...c, poster: c.poster ? mapImageUrl(c.poster) : '' }
+        }
+        return { ...c, url: c.url ? mapImageUrl(c.url) : '' }
+      })
+    }
+    if (next.home.feeds) {
+      next.home.feeds = next.home.feeds.map((f) => ({
+        ...f,
+        images: mapUrlList(f.images)
+      }))
+    }
+  }
   if (next.store) {
     if (next.store.guidance) next.store.guidance = mapUrlList(next.store.guidance)
     if (next.store.environment) next.store.environment = mapUrlList(next.store.environment)
@@ -186,6 +272,8 @@ function forDisplay(data) {
 
 async function getHome() {
   const data = forDisplay(await loadContent())
+  const home = data.home || normalizeHome({})
+  const covers = (home.covers || []).filter((c) => c && c.url)
   const xhs = data.social && data.social.xhs && data.social.xhs.enabled ? data.social.xhs : null
   const douyin = data.social && data.social.douyin && data.social.douyin.enabled ? data.social.douyin : null
   const showXhs = !!xhs
@@ -193,6 +281,9 @@ async function getHome() {
   const showSocial = showXhs || showDouyin
   const showStore = !!(data.store && data.store.enabled)
   return {
+    covers,
+    studio: home.studio || normalizeStudio({}),
+    feeds: home.feeds || [],
     seriesList: (data.series || []).filter((s) => !s.hidden),
     social: { enabled: showSocial, xhs, douyin },
     showSocial,
@@ -382,6 +473,34 @@ async function migrateExternalImages(content, onProgress) {
     return next
   }
 
+  if (data.home) {
+    if (Array.isArray(data.home.covers)) {
+      for (const cover of data.home.covers) {
+        if (!cover) continue
+        if (cover.type === 'video') {
+          if (cover.poster) cover.poster = await replaceOne(cover.poster, 'home/covers')
+          // 视频外链一般无法可靠下载，仅迁移封面图
+        } else if (cover.url) {
+          cover.url = await replaceOne(cover.url, 'home/covers')
+        }
+      }
+    }
+    if (Array.isArray(data.home.feeds)) {
+      for (const feed of data.home.feeds) {
+        if (!feed || !Array.isArray(feed.images)) continue
+        for (let i = 0; i < feed.images.length; i++) {
+          feed.images[i] = await replaceOne(feed.images[i], 'home/feeds')
+        }
+      }
+    }
+    if (data.home.studio && data.home.studio.avatar) {
+      data.home.studio.avatar = await replaceOne(data.home.studio.avatar, 'home/avatar')
+    }
+    if (data.home.studio && data.home.studio.wxacode) {
+      data.home.studio.wxacode = await replaceOne(data.home.studio.wxacode, 'home/wxacode')
+    }
+  }
+
   for (const series of data.series || []) {
     if (series.cover) series.cover = await replaceOne(series.cover, 'series/cover')
   }
@@ -434,6 +553,20 @@ async function migrateExternalImages(content, onProgress) {
 function collectMigrateJobs(data, out) {
   const push = (url) => {
     if (cosUtil.isExternalImageUrl(url)) out.push(url)
+  }
+  if (data.home) {
+    ;(data.home.covers || []).forEach((c) => {
+      if (!c) return
+      if (c.type === 'video') push(c.poster)
+      else push(c.url)
+    })
+    ;(data.home.feeds || []).forEach((f) => {
+      ;(f.images || []).forEach(push)
+    })
+    if (data.home.studio) {
+      push(data.home.studio.avatar)
+      push(data.home.studio.wxacode)
+    }
   }
   ;(data.series || []).forEach((s) => push(s.cover))
   ;(data.styles || []).forEach((style) => {

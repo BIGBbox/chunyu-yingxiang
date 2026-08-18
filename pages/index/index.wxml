@@ -1,79 +1,278 @@
-<view class="page safe-bottom">
-  <view class="page-main">
-    <view class="search-bar">
-      <view class="search-input-wrap">
-        <text class="search-icon">⌕</text>
-        <input
-          class="search-input"
-          placeholder="搜索本店客片关键词"
-          placeholder-class="search-ph"
-          value="{{keyword}}"
-          confirm-type="search"
-          bindinput="onKeywordInput"
-          bindconfirm="onSearch"
-        />
-      </view>
-      <view class="search-btn" bindtap="onImageSearch">图片搜索</view>
+<view class="page">
+  <!-- ① 封面：在导航栏下方，不侵入刘海 -->
+  <view class="cover-wrap" style="height: {{coverHeight}}px;">
+    <swiper
+      wx:if="{{covers.length}}"
+      class="cover-swiper"
+      current="{{coverIndex}}"
+      circular="{{covers.length > 1}}"
+      autoplay="{{swiperAutoplay}}"
+      interval="5000"
+      duration="500"
+      bindchange="onCoverChange"
+    >
+      <swiper-item wx:for="{{covers}}" wx:key="index">
+        <view class="cover-slide" data-index="{{index}}" bindtap="onCoverTap">
+          <block wx:if="{{item.type === 'video'}}">
+            <video
+              id="coverVideo{{index}}"
+              class="cover-media cover-video {{coverIndex === index && videoFading ? 'is-fading' : ''}}"
+              src="{{item.url}}"
+              poster="{{item.poster}}"
+              object-fit="cover"
+              muted="{{videoMuted}}"
+              loop="{{false}}"
+              controls="{{videoFullscreen}}"
+              show-center-play-btn="{{false}}"
+              show-play-btn="{{false}}"
+              show-mute-btn="{{false}}"
+              enable-progress-gesture="{{false}}"
+              autoplay="{{false}}"
+              bindended="onVideoEnded"
+              bindfullscreenchange="onVideoFullscreenChange"
+              data-index="{{index}}"
+            />
+            <view class="cover-play" wx:if="{{coverIndex === index && !videoPlaying && !videoFading}}">
+              <view class="cover-play-btn" />
+            </view>
+          </block>
+          <image wx:else class="cover-media" src="{{item.url}}" mode="aspectFill" />
+        </view>
+      </swiper-item>
+    </swiper>
+    <view wx:else class="cover-empty">暂无封面</view>
+
+    <view class="cover-dots" wx:if="{{covers.length > 1}}">
+      <view
+        class="cover-dot {{coverIndex === index ? 'on' : ''}}"
+        wx:for="{{covers}}"
+        wx:key="index"
+      />
     </view>
 
-    <view class="section-title" bindtap="onTitleTap">椿屿影像(热门系列)</view>
+    <view
+      class="cover-mute"
+      wx:if="{{currentIsVideo && !videoFading}}"
+      catchtap="onToggleMute"
+    >
+      <image
+        class="cover-mute-ico"
+        src="{{videoMuted ? '/images/icons/mute.svg' : '/images/icons/unmute.svg'}}"
+        mode="aspectFit"
+      />
+    </view>
 
-    <view class="series-grid">
+    <view
+      class="cover-fullscreen"
+      wx:if="{{currentIsVideo && !videoFading}}"
+      catchtap="onToggleFullscreen"
+    >
+      <view class="cover-fullscreen-ico" />
+    </view>
+  </view>
+
+  <!-- ② 工作室介绍 -->
+  <view class="studio-card">
+    <view class="studio-name" bindtap="onTitleTap">{{studio.name}}</view>
+    <view class="studio-intro" wx:if="{{studio.intro}}">{{studio.intro}}</view>
+    <view class="studio-tags" wx:if="{{studio.tags.length}}">
+      <text class="studio-tag" wx:for="{{studio.tags}}" wx:key="*this">#{{item}}</text>
+    </view>
+
+    <view class="studio-actions">
+      <view class="action-item" bindtap="onPhoneTap">
+        <view class="action-btn">
+          <image class="action-ico" src="/images/icons/phone.png" mode="aspectFit" />
+        </view>
+        <text class="action-label">电话</text>
+      </view>
+      <view class="action-item">
+        <view class="action-btn">
+          <image class="action-ico" src="/images/icons/wechat.png" mode="aspectFit" />
+        </view>
+        <text class="action-label">微信</text>
+        <button class="action-hit" open-type="contact" session-from="index-wechat" hover-class="none" />
+      </view>
+      <view class="action-item" bindtap="onLocationTap">
+        <view class="action-btn">
+          <image class="action-ico" src="/images/icons/location.png" mode="aspectFit" />
+        </view>
+        <text class="action-label">位置</text>
+      </view>
+      <view class="action-item" bindtap="onStudioShare">
+        <view class="action-btn">
+          <image class="action-ico" src="/images/icons/share.png" mode="aspectFit" />
+        </view>
+        <text class="action-label">分享</text>
+      </view>
+    </view>
+
+    <view class="studio-divider" />
+  </view>
+
+  <!-- 作品：大图封面 + 居中标题 -->
+  <view class="section section-works" wx:if="{{seriesList.length}}">
+    <view class="section-head section-head--feeds" bindtap="onWorksTap">
+      <text class="section-title section-title--feeds">作品</text>
+      <text class="section-arrow section-arrow--feeds">›</text>
+    </view>
+    <view class="works-list">
       <view
-        class="series-card"
+        class="works-banner"
         wx:for="{{seriesList}}"
         wx:key="id"
         data-id="{{item.id}}"
         bindtap="onSeriesTap"
       >
-        <image class="series-cover" src="{{item.cover}}" mode="aspectFill" lazy-load />
-        <view class="series-name">{{item.name}}</view>
+        <image class="works-banner-img" src="{{item.cover}}" mode="aspectFill" lazy-load />
+        <view class="works-banner-mask" />
+        <text class="works-banner-name">{{item.name}}</text>
       </view>
     </view>
   </view>
 
-  <view class="page-footer" wx:if="{{showStore || showXhs || showDouyin}}">
-    <view class="section-title" wx:if="{{showXhs || showDouyin}}">社交平台账号</view>
-    <view class="social-row" wx:if="{{showXhs || showDouyin}}">
-      <view class="social-card" wx:if="{{showXhs}}">
-        <view class="social-head">小红书</view>
-        <image class="social-banner" src="{{social.xhs.banner}}" mode="aspectFill" />
-        <view class="social-profile">
-          <image class="social-avatar" src="{{social.xhs.avatar}}" mode="aspectFill" />
-          <view class="social-meta">
-            <text class="social-account">{{social.xhs.account}}</text>
-            <text class="social-id">{{social.xhs.id}}</text>
+  <!-- ③ 动态：首页最多 3 条 -->
+  <view class="section section-feeds">
+    <view class="section-head section-head--feeds" bindtap="onMoreFeeds">
+      <text class="section-title section-title--feeds">动态</text>
+      <text class="section-arrow section-arrow--feeds">›</text>
+    </view>
+
+    <view class="feed-card" wx:for="{{previewFeeds}}" wx:key="id">
+      <view class="feed-text" wx:if="{{item.text}}" data-id="{{item.id}}" bindtap="onFeedTextTap">{{item.text}}</view>
+      <view class="feed-grid feed-grid-{{item.images.length}}" wx:if="{{item.images.length}}">
+        <image
+          class="feed-img"
+          wx:for="{{item.images}}"
+          wx:for-item="img"
+          wx:for-index="imgIdx"
+          wx:key="*this"
+          src="{{img}}"
+          mode="aspectFill"
+          lazy-load
+          data-urls="{{item.images}}"
+          data-url="{{img}}"
+          bindtap="onPreviewFeed"
+        />
+      </view>
+      <view class="feed-footer">
+        <text class="feed-time">三天前</text>
+        <view class="feed-ops">
+          <view class="feed-op" data-id="{{item.id}}" bindtap="onFeedComment">
+            <image class="feed-op-ico" src="/images/icons/comment.png" mode="aspectFit" />
+          </view>
+          <view class="feed-op" data-id="{{item.id}}" bindtap="onFeedShare">
+            <image class="feed-op-ico" src="/images/icons/share-gray.png" mode="aspectFit" />
+          </view>
+          <view class="feed-op" data-id="{{item.id}}" bindtap="onFeedLike">
+            <image
+              class="feed-op-ico"
+              src="{{item.liked ? '/images/icons/like-on.png' : '/images/icons/like.png'}}"
+              mode="aspectFit"
+            />
           </view>
         </view>
-        <view class="social-footer">
-          <text class="platform-tag">小红书</text>
-          <image class="social-qr" src="{{social.xhs.qrcode}}" mode="aspectFill" data-url="{{social.xhs.qrcode}}" catchtap="onPreviewQr" />
-        </view>
       </view>
-
-      <view class="social-card" wx:if="{{showDouyin}}">
-        <view class="social-head">抖音</view>
-        <view class="dy-qr-wrap">
-          <image class="dy-qr" src="{{social.douyin.qrcode}}" mode="aspectFill" data-url="{{social.douyin.qrcode}}" bindtap="onPreviewQr" />
-        </view>
-        <view class="dy-info">
-          <text class="social-account">{{social.douyin.account}}</text>
-          <text class="social-id">{{social.douyin.id}}</text>
-        </view>
-        <view class="dy-actions">
-          <view class="dy-action" data-url="{{social.douyin.qrcode}}" bindtap="onSaveQr">保存图片</view>
-          <view class="dy-action" data-url="{{social.douyin.qrcode}}" bindtap="onPreviewQr">打开抖音</view>
+      <view class="feed-comments" wx:if="{{item.comments.length}}">
+        <view
+          class="feed-comment-line"
+          wx:for="{{item.comments}}"
+          wx:for-item="c"
+          wx:key="id"
+          data-feed-id="{{item.id}}"
+          data-cid="{{c.id}}"
+          data-mine="{{c.mine}}"
+          bindtap="onCommentLineTap"
+        >
+          <text class="feed-comment-nick">{{c.nick}}:</text>
+          <text class="feed-comment-text">{{c.text}}</text>
         </view>
       </view>
     </view>
 
-    <block wx:if="{{showStore}}">
-      <view class="section-title {{showXhs || showDouyin ? 'section-title--gap' : ''}}">门店地址</view>
-      <view class="store-entry" bindtap="onStoreTap">
-        <view class="store-icon">📍</view>
-        <text class="store-entry-text">门店地址信息</text>
-        <text class="store-arrow">›</text>
+    <view class="feeds-empty" wx:if="{{!feeds.length}}">暂无动态</view>
+    <view class="more-feeds" wx:if="{{feeds.length > 3}}" bindtap="onMoreFeeds">更多动态</view>
+  </view>
+
+  <bottom-bar
+    studio-name="{{studio.name}}"
+    avatar="{{studio.avatar}}"
+    bind:home="onBottomHome"
+    bind:share="onBottomShare"
+  />
+
+  <view class="comment-mask" wx:if="{{commentVisible}}" bindtap="onCloseComment" catchtouchmove="noop">
+    <view class="comment-sheet" catchtap="noop">
+      <form class="comment-form" bindsubmit="onSendComment">
+        <input
+          class="comment-nick-field"
+          type="nickname"
+          name="nickname"
+          placeholder="点击填写微信昵称"
+          value="{{commentNick}}"
+          maxlength="32"
+        />
+        <view class="comment-row">
+          <textarea
+            class="comment-input"
+            name="content"
+            placeholder="说点什么…"
+            maxlength="200"
+            value="{{commentDraft}}"
+            bindinput="onCommentInput"
+          />
+          <button class="comment-send" form-type="submit">发送</button>
+        </view>
+      </form>
+    </view>
+  </view>
+
+  <!-- 分享面板：左对齐、单行文案、无取消 -->
+  <view class="share-mask" wx:if="{{shareSheetVisible}}" bindtap="onCloseShareSheet" catchtouchmove="noop">
+    <view class="share-sheet" catchtap="noop">
+      <view class="share-sheet-title">选择分享方式</view>
+      <view class="share-sheet-row" wx:if="{{!shareFeedId}}">
+        <view class="share-sheet-item" bindtap="onShareMomentsTip">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/moments.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">分享到朋友圈</text>
+        </view>
+        <view class="share-sheet-item" bindtap="onSharePoster">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/poster.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">自定义海报</text>
+        </view>
+        <view class="share-sheet-item" bindtap="onShareOaLink">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/oa-link.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">公众号链接</text>
+        </view>
+        <view class="share-sheet-item">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/share.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">直接转发</text>
+          <button class="share-hit" open-type="share" hover-class="none" />
+        </view>
       </view>
-    </block>
+      <view class="share-sheet-row" wx:else>
+        <view class="share-sheet-item" bindtap="onShareMomentsTip">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/moments.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">分享到朋友圈</text>
+        </view>
+        <view class="share-sheet-item">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/share.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">直接转发</text>
+          <button class="share-hit" open-type="share" hover-class="none" />
+        </view>
+      </view>
+    </view>
   </view>
 </view>

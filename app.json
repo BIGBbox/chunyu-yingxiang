@@ -1,15 +1,18 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/feeds/feeds",
+    "pages/feed-detail/feed-detail",
+    "pages/poster/select",
+    "pages/poster/feed",
     "pages/series/series",
     "pages/detail/detail",
     "pages/store/store",
     "pages/admin/index",
-    "pages/admin/settings",
-    "pages/admin/edit-style",
     "pages/admin/edit-series",
     "pages/admin/edit-store",
-    "pages/admin/edit-social"
+    "pages/admin/edit-home",
+    "pages/admin/edit-feeds"
   ],
   "window": {
     "navigationBarBackgroundColor": "#ffffff",
@@ -18,6 +21,12 @@
     "backgroundColor": "#f5f5f5",
     "backgroundTextStyle": "dark"
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于在地图上选择工作室位置"
+    }
+  },
+  "requiredPrivateInfos": ["chooseLocation", "getLocation"],
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"

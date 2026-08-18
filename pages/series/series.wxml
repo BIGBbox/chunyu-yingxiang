@@ -1,25 +1,66 @@
-<view class="page safe-bottom">
-  <view class="search-bar">
-    <view class="search-input-wrap">
-      <text class="search-icon">⌕</text>
-      <input
-        class="search-input"
-        placeholder="景德镇门店共有{{styleCount}}套客片可供参考"
-        placeholder-class="search-ph"
-        value="{{keyword}}"
-        confirm-type="search"
-        bindinput="onKeywordInput"
-        bindconfirm="onSearch"
-      />
+<view class="page">
+  <view class="hero" catchtouchmove="noop">
+    <view class="hero-bg-wrap">
+      <image class="hero-bg" wx:if="{{blurCover}}" src="{{blurCover}}" mode="aspectFill" />
     </view>
-    <view class="search-btn" bindtap="onImageSearch">图片搜索</view>
+    <view class="hero-veil" />
+    <view class="hero-content" style="padding-top: {{statusBarHeight + 8}}px;">
+      <view class="nav-back" bindtap="onBack">
+        <text class="nav-back-ico">‹</text>
+      </view>
+      <view class="hero-main">
+        <view class="hero-title">{{seriesName}}</view>
+        <view class="hero-count">— {{filtered.length}}个作品 —</view>
+        <view class="hero-share-btn" bindtap="onOpenShare">↗</view>
+      </view>
+    </view>
   </view>
 
-  <view class="style-grid" wx:if="{{filtered.length}}">
-    <view class="style-card" wx:for="{{filtered}}" wx:key="id" data-id="{{item.id}}" bindtap="onStyleTap">
-      <image class="style-cover" src="{{item.cover}}" mode="aspectFill" lazy-load />
-      <view class="style-name">{{item.name}}</view>
+  <scroll-view
+    class="work-scroll"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="work-list">
+      <view
+        class="work-card"
+        wx:for="{{filtered}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onStyleTap"
+      >
+        <image class="work-cover" src="{{item.cover}}" mode="aspectFill" lazy-load />
+        <view class="work-meta">
+          <view class="work-name">{{item.name}}</view>
+          <view class="work-tag">#{{item.name}}</view>
+        </view>
+      </view>
+      <view class="empty" wx:if="{{!filtered.length}}">暂无作品</view>
+    </view>
+  </scroll-view>
+
+  <view class="share-mask" wx:if="{{shareSheetVisible}}" bindtap="onCloseShare" catchtouchmove="noop">
+    <view class="share-sheet" catchtap="noop">
+      <view class="share-sheet-title">选择分享方式</view>
+      <view class="share-sheet-row">
+        <view class="share-sheet-item" bindtap="onShareMoments">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/moments.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">分享到朋友圈</text>
+        </view>
+        <view class="share-sheet-item">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/share.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">直接转发</text>
+          <button class="share-hit" open-type="share" hover-class="none" bindtap="onCloseShare" />
+        </view>
+      </view>
     </view>
   </view>
-  <view class="empty" wx:else><text>暂无匹配样式</text></view>
 </view>

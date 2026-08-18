@@ -1,4 +1,8 @@
 {
   "navigationBarTitleText": "椿屿影像",
-  "enablePullDownRefresh": true
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#ffffff",
+  "usingComponents": {
+    "bottom-bar": "/components/bottom-bar/bottom-bar"
+  }
 }

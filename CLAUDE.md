@@ -65,5 +65,6 @@
 ## 给 Agent 的提示
 
 - 改存储/上传逻辑先读 `utils/cos.js` 与 `docs/COS上手.md`
+- **勿用 `wx.getUserProfile` 拉昵称/头像**（已收回）；用 `input type="nickname"` + form 提交，见 README「头像昵称」与 `utils/userProfile.js`
 - 保持小程序结构与中文注释；避免无关重构
 - Cursor 规则见 `.cursor/rules/wxtool-cos.mdc`

@@ -1,1 +1,7 @@
-{ "navigationBarTitleText": "客片详情" }
+{
+  "navigationStyle": "custom",
+  "backgroundColor": "#ffffff",
+  "usingComponents": {
+    "bottom-bar": "/components/bottom-bar/bottom-bar"
+  }
+}

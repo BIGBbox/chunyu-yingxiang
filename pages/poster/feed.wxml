@@ -1,0 +1,55 @@
+<view class="page">
+  <view class="page-title">选择照片以生成名片</view>
+
+  <view class="photo-grid">
+    <view
+      class="photo-item {{selectedId === item.id ? 'on' : ''}}"
+      wx:for="{{photos}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onSelect"
+    >
+      <image class="photo-img" src="{{item.url}}" mode="aspectFill" />
+      <view class="photo-check" wx:if="{{selectedId === item.id}}">✓</view>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{!photos.length}}">该动态暂无图片，无法生成名片</view>
+
+  <canvas type="2d" id="posterCanvas" class="poster-canvas" />
+
+  <view class="footer">
+    <view class="gen-btn {{!selectedId ? 'disabled' : ''}}" bindtap="onGenerate">立即生成</view>
+  </view>
+
+  <!-- 官方昵称填写：点输入框键盘上方可选微信昵称；跳过则用「微信用户」 -->
+  <view class="nick-mask" wx:if="{{nickSheetVisible}}" catchtouchmove="noop">
+    <view class="nick-sheet" catchtap="noop">
+      <view class="nick-title">填写分享昵称</view>
+      <view class="nick-hint">点击下方输入框，可从键盘上方选用微信昵称</view>
+      <form bindsubmit="onNickSubmit">
+        <input
+          class="nick-input"
+          type="nickname"
+          name="nickname"
+          placeholder="点击填写微信昵称"
+          value="{{nickDraft}}"
+          maxlength="32"
+        />
+        <view class="nick-actions">
+          <view class="nick-btn ghost" bindtap="onNickSkip">跳过</view>
+          <button class="nick-btn primary" form-type="submit">确定并生成</button>
+        </view>
+      </form>
+    </view>
+  </view>
+
+  <view class="preview-mask" wx:if="{{previewVisible}}" catchtouchmove="noop">
+    <view class="preview-card">
+      <image class="preview-img" src="{{previewPath}}" mode="widthFix" />
+    </view>
+    <view class="preview-actions">
+      <view class="preview-btn discard" bindtap="onDiscard">放弃</view>
+      <view class="preview-btn save" bindtap="onSaveAlbum">保存图片</view>
+    </view>
+  </view>
+</view>

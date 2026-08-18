@@ -1,1 +1,5 @@
-{ "navigationBarTitleText": "椿屿影像" }
+{
+  "navigationStyle": "custom",
+  "backgroundColor": "#ffffff",
+  "disableScroll": true
+}

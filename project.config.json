@@ -87,7 +87,7 @@
     }
   },
   "compileType": "miniprogram",
-  "libVersion": "3.5.5",
+  "libVersion": "3.17.0",
   "appid": "wx1bb2d898b8bd9048",
   "projectname": "椿屿影像",
   "condition": {},

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "动态详情",
+  "usingComponents": {
+    "bottom-bar": "/components/bottom-bar/bottom-bar"
+  }
+}

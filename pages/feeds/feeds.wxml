@@ -1,0 +1,108 @@
+<view class="page">
+  <view class="feed-card {{focusFeedId === item.id ? 'feed-card--focus' : ''}}" id="feed-{{item.id}}" wx:for="{{feeds}}" wx:key="id">
+    <view class="feed-text" wx:if="{{item.text}}" data-id="{{item.id}}" bindtap="onFeedTextTap">{{item.text}}</view>
+    <view class="feed-grid feed-grid-{{item.images.length}}" wx:if="{{item.images.length}}">
+      <image
+        class="feed-img"
+        wx:for="{{item.images}}"
+        wx:for-item="img"
+        wx:key="*this"
+        src="{{img}}"
+        mode="aspectFill"
+        lazy-load
+        data-urls="{{item.images}}"
+        data-url="{{img}}"
+        bindtap="onPreviewFeed"
+      />
+    </view>
+    <view class="feed-footer">
+      <text class="feed-time">三天前</text>
+      <view class="feed-ops">
+        <view class="feed-op" data-id="{{item.id}}" bindtap="onFeedComment">
+          <image class="feed-op-ico" src="/images/icons/comment.png" mode="aspectFit" />
+        </view>
+        <view class="feed-op" data-id="{{item.id}}" bindtap="onFeedShare">
+          <image class="feed-op-ico" src="/images/icons/share-gray.png" mode="aspectFit" />
+        </view>
+        <view class="feed-op" data-id="{{item.id}}" bindtap="onFeedLike">
+          <image
+            class="feed-op-ico"
+            src="{{item.liked ? '/images/icons/like-on.png' : '/images/icons/like.png'}}"
+            mode="aspectFit"
+          />
+        </view>
+      </view>
+    </view>
+    <view class="feed-comments" wx:if="{{item.comments.length}}">
+      <view
+        class="feed-comment-line"
+        wx:for="{{item.comments}}"
+        wx:for-item="c"
+        wx:key="id"
+        data-feed-id="{{item.id}}"
+        data-cid="{{c.id}}"
+        data-mine="{{c.mine}}"
+        bindtap="onCommentLineTap"
+      >
+        <text class="feed-comment-nick">{{c.nick}}:</text>
+        <text class="feed-comment-text">{{c.text}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!feeds.length}}">暂无动态</view>
+
+  <bottom-bar
+    studio-name="{{studio.name}}"
+    avatar="{{studio.avatar}}"
+    bind:home="onBottomHome"
+    bind:share="onBottomShare"
+  />
+
+  <view class="comment-mask" wx:if="{{commentVisible}}" bindtap="onCloseComment" catchtouchmove="noop">
+    <view class="comment-sheet" catchtap="noop">
+      <form class="comment-form" bindsubmit="onSendComment">
+        <input
+          class="comment-nick-field"
+          type="nickname"
+          name="nickname"
+          placeholder="点击填写微信昵称"
+          value="{{commentNick}}"
+          maxlength="32"
+        />
+        <view class="comment-row">
+          <textarea
+            class="comment-input"
+            name="content"
+            placeholder="说点什么…"
+            maxlength="200"
+            value="{{commentDraft}}"
+            bindinput="onCommentInput"
+          />
+          <button class="comment-send" form-type="submit">发送</button>
+        </view>
+      </form>
+    </view>
+  </view>
+
+  <view class="share-mask" wx:if="{{shareSheetVisible}}" bindtap="onCloseShareSheet" catchtouchmove="noop">
+    <view class="share-sheet" catchtap="noop">
+      <view class="share-sheet-title">选择分享方式</view>
+      <view class="share-sheet-row share-sheet-row--feed">
+        <view class="share-sheet-item" bindtap="onShareMomentsTip">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/moments.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">分享到朋友圈</text>
+        </view>
+        <view class="share-sheet-item">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/share.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">直接转发</text>
+          <button class="share-hit" open-type="share" hover-class="none" />
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

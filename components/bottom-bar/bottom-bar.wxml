@@ -1,0 +1,13 @@
+<view class="bar">
+  <view class="bar-brand" bindtap="onHome">
+    <image class="bar-avatar" src="{{avatar || defaultAvatar}}" mode="aspectFill" />
+    <view class="bar-name">{{studioName || '椿屿影像'}}</view>
+  </view>
+  <view class="bar-actions">
+    <view class="bar-btn" wx:if="{{showComment}}" bindtap="onComment">评论</view>
+    <view class="bar-btn" wx:if="{{showLike}}" bindtap="onLike">{{liked ? '已喜欢' : '喜欢'}}</view>
+    <button wx:if="{{!shareAsSheet}}" class="bar-btn" open-type="share" bindtap="onShareTap" hover-class="none">分享</button>
+    <view wx:else class="bar-btn" bindtap="onShareTap">分享</view>
+    <button class="bar-consult" open-type="contact" session-from="bottom-bar" hover-class="none">咨询</button>
+  </view>
+</view>

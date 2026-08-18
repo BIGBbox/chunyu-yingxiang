@@ -1,0 +1,44 @@
+<view class="page">
+  <block wx:if="{{mode === 'list'}}">
+    <view class="toolbar">
+      <view class="add-btn" bindtap="onCreate">+ 新建动态</view>
+    </view>
+    <view class="list-card" wx:for="{{feeds}}" wx:key="id">
+      <image class="thumb" src="{{item.images[0] || ''}}" mode="aspectFill" wx:if="{{item.images[0]}}" />
+      <view class="thumb placeholder" wx:else>无图</view>
+      <view class="list-body">
+        <view class="list-name">{{item.text || '（无文案）'}}</view>
+        <view class="list-sub">{{item.images.length}} 张图 · 排序 {{item.sort}}</view>
+        <view class="list-actions">
+          <text class="link" data-id="{{item.id}}" bindtap="onEdit">编辑</text>
+          <text class="link danger" data-id="{{item.id}}" bindtap="onDelete">删除</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!feeds.length}}">暂无动态</view>
+  </block>
+
+  <block wx:else>
+    <view class="form-card">
+      <view class="label">文案</view>
+      <textarea class="textarea" data-field="text" value="{{form.text}}" bindinput="onInput" auto-height maxlength="500" />
+
+      <view class="label">排序</view>
+      <input class="input" type="number" data-field="sort" value="{{form.sort}}" bindinput="onInput" />
+
+      <view class="label">九宫格图片（最多 9 张）</view>
+      <view class="img-grid">
+        <view class="img-item" wx:for="{{form.images}}" wx:key="*this">
+          <image src="{{item}}" mode="aspectFill" />
+          <view class="rm" data-index="{{index}}" bindtap="onRemoveImage">×</view>
+        </view>
+        <view class="upload-tile" bindtap="onUploadImages" wx:if="{{form.images.length < 9}}">+</view>
+      </view>
+      <view class="hint">游客端时间固定显示「三天前」；点赞状态保存在各用户本机。</view>
+    </view>
+    <view class="footer-btns">
+      <view class="btn ghost" bindtap="onCancel">取消</view>
+      <view class="btn primary" bindtap="onSave">保存到 COS</view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,65 @@
+<view class="page" wx:if="{{feed}}">
+  <view class="feed-text">{{feed.text}}</view>
+  <view class="feed-grid feed-grid-{{feed.images.length}}" wx:if="{{feed.images.length}}">
+    <image
+      class="feed-img"
+      wx:for="{{feed.images}}"
+      wx:for-item="img"
+      wx:key="*this"
+      src="{{img}}"
+      mode="aspectFill"
+      data-urls="{{feed.images}}"
+      data-url="{{img}}"
+      bindtap="onPreview"
+    />
+  </view>
+  <view class="feed-time">三天前</view>
+
+  <view class="comment-section" wx:if="{{comments.length}}">
+    <view class="comment-head">最新热评 {{comments.length}}</view>
+    <view class="comment-item" wx:for="{{comments}}" wx:key="id" data-id="{{item.id}}" data-mine="{{item.mine}}" bindtap="onCommentTap">
+      <image class="comment-avatar" src="/images/icons/avatar-default.png" mode="aspectFill" />
+      <view class="comment-body">
+        <text class="comment-nick">{{item.nick}}:</text>
+        <text class="comment-text">{{item.text}}</text>
+      </view>
+    </view>
+  </view>
+
+  <bottom-bar
+    studio-name="{{studio.name}}"
+    avatar="{{studio.avatar}}"
+    show-comment="{{true}}"
+    bind:home="onGoHome"
+    bind:comment="onOpenComment"
+    bind:share="onBottomShare"
+  />
+
+  <view class="comment-mask" wx:if="{{commentVisible}}" bindtap="onCloseComment" catchtouchmove="noop">
+    <view class="comment-sheet" catchtap="noop">
+      <form class="comment-form" bindsubmit="onSendComment">
+        <input
+          class="comment-nick-field"
+          type="nickname"
+          name="nickname"
+          placeholder="点击填写微信昵称"
+          value="{{commentNick}}"
+          maxlength="32"
+        />
+        <view class="comment-row">
+          <textarea
+            class="comment-input"
+            name="content"
+            placeholder="说点什么…"
+            maxlength="200"
+            value="{{commentDraft}}"
+            bindinput="onCommentInput"
+          />
+          <button class="comment-send" form-type="submit">发送</button>
+        </view>
+      </form>
+    </view>
+  </view>
+</view>
+
+<view class="empty" wx:else>动态不存在</view>

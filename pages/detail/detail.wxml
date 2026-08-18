@@ -1,45 +1,103 @@
 <view class="page" wx:if="{{!loading && detail}}">
-  <view class="meta">
-    <image class="avatar" src="{{detail.avatar || detail.cover}}" mode="aspectFill" />
-    <text class="meta-time">{{updatedText}}</text>
-    <view class="meta-views">
-      <text class="eye">👁</text>
-      <text>{{detail.viewCount}}</text>
+  <view class="top" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-back" bindtap="onBack">
+      <text class="nav-back-ico">‹</text>
     </view>
   </view>
 
-  <swiper
-    class="hero-swiper"
-    indicator-dots
-    indicator-color="rgba(255,255,255,0.45)"
-    indicator-active-color="#ffffff"
-    autoplay
-    circular
-    interval="4000"
-  >
-    <swiper-item wx:for="{{detail.images}}" wx:key="*this">
-      <image class="hero-img" src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="onPreviewSwiper" />
-    </swiper-item>
-  </swiper>
+  <view class="header">
+    <view class="title">{{detail.name}}</view>
+    <view class="tag">{{detail.name}}</view>
+    <view class="copy">© {{studioName}}</view>
+  </view>
 
-  <view class="pkg">
-    <view class="pkg-row" wx:for="{{packageRows}}" wx:key="label">
-      <text class="pkg-label">{{item.label}}</text>
-      <text class="pkg-value">{{item.value}}</text>
+  <view class="preview-bar">
+    <text class="preview-label">预览</text>
+    <view class="view-toggle">
+      <image
+        class="view-ico"
+        src="{{viewMode === 'list' ? '/images/icons/view-list.png' : '/images/icons/view-list-off.png'}}"
+        mode="aspectFit"
+        data-mode="list"
+        bindtap="onSwitchView"
+      />
+      <image
+        class="view-ico"
+        src="{{viewMode === 'grid' ? '/images/icons/view-grid.png' : '/images/icons/view-grid-off.png'}}"
+        mode="aspectFit"
+        data-mode="grid"
+        bindtap="onSwitchView"
+      />
     </view>
   </view>
 
-  <view class="gallery">
+  <view class="photos photos--list" wx:if="{{viewMode === 'list'}}">
     <image
-      wx:for="{{detail.gallery}}"
+      class="photo-list"
+      wx:for="{{photos}}"
       wx:key="*this"
-      class="gallery-img"
       src="{{item}}"
       mode="widthFix"
       lazy-load
       data-url="{{item}}"
-      bindtap="onPreviewGallery"
+      bindtap="onPreview"
     />
+  </view>
+  <view class="photos photos--grid" wx:else>
+    <image
+      class="photo-grid"
+      wx:for="{{photos}}"
+      wx:key="*this"
+      src="{{item}}"
+      mode="aspectFill"
+      lazy-load
+      data-url="{{item}}"
+      bindtap="onPreview"
+    />
+  </view>
+
+  <!-- 右侧快速滚动条 -->
+  <view
+    class="scrubber"
+    style="top: {{scrubberTop}}px; height: {{scrubberHeight}}px;"
+    catchtouchstart="onScrubStart"
+    catchtouchmove="onScrubMove"
+    catchtouchend="onScrubEnd"
+  >
+    <view class="scrubber-track" />
+    <view class="scrubber-thumb" style="top: {{scrubThumbTop}}px;" />
+  </view>
+
+  <bottom-bar
+    studio-name="{{studioName}}"
+    avatar="{{studioAvatar}}"
+    show-like="{{true}}"
+    liked="{{liked}}"
+    share-as-sheet="{{true}}"
+    bind:home="onGoHome"
+    bind:like="onToggleLike"
+    bind:share="onOpenShare"
+  />
+
+  <view class="share-mask" wx:if="{{shareSheetVisible}}" bindtap="onCloseShare" catchtouchmove="noop">
+    <view class="share-sheet" catchtap="noop">
+      <view class="share-sheet-title">选择分享方式</view>
+      <view class="share-sheet-row">
+        <view class="share-sheet-item" bindtap="onShareMoments">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/moments.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">分享到朋友圈</text>
+        </view>
+        <view class="share-sheet-item">
+          <view class="share-sheet-ico">
+            <image class="share-sheet-img" src="/images/icons/share.png" mode="aspectFit" />
+          </view>
+          <text class="share-sheet-label">直接转发</text>
+          <button class="share-hit" open-type="share" hover-class="none" bindtap="onCloseShare" />
+        </view>
+      </view>
+    </view>
   </view>
 </view>
 <view class="loading" wx:if="{{loading}}">加载中...</view>

@@ -1,8 +1,82 @@
 module.exports = {
-	"updatedAt": "2026-08-10 17:00:00",
+	"updatedAt": "2026-08-17 11:00:00",
 	"settings": {
 		"watermarkEnabled": false,
 		"shareEnabled": true
+	},
+	"home": {
+		"covers": [
+			{
+				"type": "image",
+				"url": "https://picsum.photos/seed/cover1/900/1200",
+				"poster": ""
+			},
+			{
+				"type": "image",
+				"url": "https://picsum.photos/seed/cover2/900/1200",
+				"poster": ""
+			},
+			{
+				"type": "image",
+				"url": "https://picsum.photos/seed/cover3/900/1200",
+				"poster": ""
+			},
+			{
+				"type": "image",
+				"url": "https://picsum.photos/seed/cover4/900/1200",
+				"poster": ""
+			},
+			{
+				"type": "image",
+				"url": "https://picsum.photos/seed/cover5/900/1200",
+				"poster": ""
+			}
+		],
+		"studio": {
+			"name": "椿屿影像",
+			"intro": "我们是好玩、好看且有温度的摄影工作室，记录你人生中每一个重要的时刻。所见即所得，让每一张照片都充满故事。",
+			"tags": [
+				"婚礼摄影",
+				"婚纱旅拍",
+				"商业拍摄"
+			],
+			"phone": "",
+			"latitude": 29.29256,
+			"longitude": 117.21456,
+			"address": "江西省景德镇市",
+			"avatar": ""
+		},
+		"feeds": [
+			{
+				"id": "feed_demo_1",
+				"text": "爱被塑造，被见证，被传递。",
+				"images": [
+					"https://picsum.photos/seed/feed1a/600/600",
+					"https://picsum.photos/seed/feed1b/600/600",
+					"https://picsum.photos/seed/feed1c/600/600",
+					"https://picsum.photos/seed/feed1d/600/600",
+					"https://picsum.photos/seed/feed1e/600/600",
+					"https://picsum.photos/seed/feed1f/600/600",
+					"https://picsum.photos/seed/feed1g/600/600",
+					"https://picsum.photos/seed/feed1h/600/600",
+					"https://picsum.photos/seed/feed1i/600/600"
+				],
+				"sort": 1
+			},
+			{
+				"id": "feed_demo_2",
+				"text": "感受一切用爱意堆积起来的东西",
+				"images": [
+					"https://picsum.photos/seed/feed2a/600/600",
+					"https://picsum.photos/seed/feed2b/600/600",
+					"https://picsum.photos/seed/feed2c/600/600",
+					"https://picsum.photos/seed/feed2d/600/600",
+					"https://picsum.photos/seed/feed2e/600/600",
+					"https://picsum.photos/seed/feed2f/600/600"
+				],
+				"sort": 2
+			}
+		]
 	},
 	"series": [
 		{

@@ -212,24 +212,52 @@ function uploadFile(filePath, Key) {
   })
 }
 
-function chooseAndUpload(count = 9, dir = 'uploads') {
+/**
+ * 选择并上传媒体
+ * @param {number} count
+ * @param {string} dir COS 目录前缀
+ * @param {{ mediaType?: string[] }} [opts] mediaType 默认仅图片；可传 ['image','video']
+ * @returns {Promise<string[]|{url:string,type:string,thumb?:string}[]>}
+ *   仅图片时返回 url 字符串数组；含 video 时返回对象数组
+ */
+function chooseAndUpload(count = 9, dir = 'uploads', opts) {
+  const mediaType = (opts && opts.mediaType) || ['image']
+  const rich = mediaType.indexOf('video') >= 0
   return new Promise((resolve, reject) => {
     wx.chooseMedia({
       count,
-      mediaType: ['image'],
+      mediaType,
       sourceType: ['album', 'camera'],
+      maxDuration: 60,
       success: async (res) => {
         wx.showLoading({ title: '上传中...', mask: true })
         try {
-          const urls = []
+          const out = []
           for (const f of res.tempFiles) {
-            const ext = (f.tempFilePath.match(/\.\w+$/) || ['.jpg'])[0]
+            const isVideo = f.fileType === 'video' || /\.(mp4|mov|m4v)$/i.test(f.tempFilePath)
+            const ext = (f.tempFilePath.match(/\.\w+$/) || [isVideo ? '.mp4' : '.jpg'])[0]
             const key = `${dir}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}${ext}`
             const url = await uploadFile(f.tempFilePath, key)
-            urls.push(url)
+            if (rich) {
+              const item = { url, type: isVideo ? 'video' : 'image' }
+              if (isVideo && f.thumbTempFilePath) {
+                try {
+                  const thumbExt = (f.thumbTempFilePath.match(/\.\w+$/) || ['.jpg'])[0]
+                  const thumbKey = `${dir}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}${thumbExt}`
+                  item.poster = await uploadFile(f.thumbTempFilePath, thumbKey)
+                } catch (e) {
+                  item.poster = ''
+                }
+              } else {
+                item.poster = ''
+              }
+              out.push(item)
+            } else {
+              out.push(url)
+            }
           }
           wx.hideLoading()
-          resolve(urls)
+          resolve(out)
         } catch (e) {
           wx.hideLoading()
           reject(e)

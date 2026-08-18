@@ -1,0 +1,68 @@
+<view class="page">
+  <view class="form-card">
+    <view class="block-title">封面（固定 5 槽）</view>
+    <view class="hint">可上传图片或视频；空槽不在游客端展示。视频会静音循环播放。</view>
+    <view class="cover-list">
+      <view class="cover-slot" wx:for="{{covers}}" wx:key="index">
+        <view class="cover-slot-head">
+          <text>第 {{index + 1}} 槽</text>
+          <text class="cover-type" wx:if="{{item.url}}">{{item.type === 'video' ? '视频' : '图片'}}</text>
+        </view>
+        <view class="cover-preview" wx:if="{{item.url}}">
+          <image wx:if="{{item.type === 'image'}}" src="{{item.url}}" mode="aspectFill" />
+          <image wx:else src="{{item.poster || item.url}}" mode="aspectFill" />
+          <view class="rm" data-index="{{index}}" bindtap="onClearCover">×</view>
+        </view>
+        <view class="cover-actions">
+          <view class="mini-btn" data-index="{{index}}" bindtap="onUploadCover">上传图/视频</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-card">
+    <view class="block-title">工作室信息</view>
+    <view class="label">工作室名称</view>
+    <input class="input" data-field="name" value="{{studio.name}}" bindinput="onStudioInput" />
+
+    <view class="label">工作室头像（底栏与分享封面）</view>
+    <view class="wxacode-row">
+      <image wx:if="{{studio.avatar}}" class="avatar-preview" src="{{studio.avatar}}" mode="aspectFill" />
+      <view class="mini-btn" bindtap="onUploadAvatar">{{studio.avatar ? '更换头像' : '上传头像'}}</view>
+      <view class="mini-btn ghost" wx:if="{{studio.avatar}}" bindtap="onClearAvatar">清除</view>
+    </view>
+
+    <view class="label">介绍文案</view>
+    <textarea class="textarea" data-field="intro" value="{{studio.intro}}" bindinput="onStudioInput" auto-height maxlength="500" />
+
+    <view class="label">业务标签（逗号或换行分隔，如：婚礼摄影,婚纱旅拍）</view>
+    <textarea class="textarea" value="{{tagsText}}" bindinput="onTagsInput" auto-height placeholder="婚礼摄影,婚纱旅拍,商业拍摄" />
+
+    <view class="label">电话（留空则游客端提示「暂无电话」）</view>
+    <input class="input" data-field="phone" value="{{studio.phone}}" bindinput="onStudioInput" type="number" />
+
+    <view class="label">工作室位置</view>
+    <view class="loc-box" wx:if="{{studio.address || studio.latitude}}">
+      <view class="loc-addr">{{studio.address || '已选点'}}</view>
+      <view class="loc-coord" wx:if="{{studio.latitude}}">{{studio.latitude}}, {{studio.longitude}}</view>
+    </view>
+    <view class="loc-empty" wx:else>尚未选点</view>
+    <view class="mini-btn loc-btn" bindtap="onChooseLocation">打开地图选点</view>
+    <view class="hint">打开微信地图选点后自动写入经纬度与地址；游客端点「位置」会导航到此处。</view>
+
+    <view class="label">公众号链接（可选，分享面板「公众号链接」会复制）</view>
+    <input class="input" data-field="oaLink" value="{{studio.oaLink}}" bindinput="onStudioInput" placeholder="https://..." />
+
+    <view class="label">名片小程序码（自定义海报底栏）</view>
+    <view class="wxacode-row">
+      <image wx:if="{{studio.wxacode}}" class="wxacode-preview" src="{{studio.wxacode}}" mode="aspectFit" />
+      <view class="mini-btn" bindtap="onUploadWxacode">{{studio.wxacode ? '更换小程序码' : '上传小程序码'}}</view>
+      <view class="mini-btn ghost" wx:if="{{studio.wxacode}}" bindtap="onClearWxacode">清除</view>
+    </view>
+    <view class="hint">请上传微信公众平台下载的小程序码图片；未配置时名片底栏显示占位圆。</view>
+  </view>
+
+  <view class="footer-btns">
+    <view class="btn primary" bindtap="onSave">保存到 COS</view>
+  </view>
+</view>
