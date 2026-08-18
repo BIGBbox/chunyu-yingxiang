@@ -26,13 +26,13 @@ function writeLikes(map) {
   }
 }
 
-function withFeedExtras(feeds, likedMap) {
+function withFeedExtras(feeds, likedMap, commentEnabled) {
   return (feeds || []).map((f) => {
-    const comments = feedComments.listByFeed(f.id)
+    const comments = commentEnabled ? feedComments.listByFeed(f.id).slice(0, 3) : []
     return {
       ...f,
       liked: !!likedMap[f.id],
-      comments: comments.slice(0, 3)
+      comments
     }
   })
 }
@@ -67,7 +67,8 @@ Page({
     commentVisible: false,
     commentFeedId: '',
     commentDraft: '',
-    commentNick: ''
+    commentNick: '',
+    commentEnabled: false
   },
 
   _titleTap: 0,
@@ -92,7 +93,7 @@ Page({
     // 从详情页返回时刷新评论摘要
     if (this.data.feeds && this.data.feeds.length) {
       const likedMap = readLikes()
-      const feeds = withFeedExtras(this.data.feeds, likedMap)
+      const feeds = withFeedExtras(this.data.feeds, likedMap, this.data.commentEnabled)
       this.setData({
         likedMap,
         feeds,
@@ -118,7 +119,8 @@ Page({
       const data = await api.getHome()
       const covers = data.covers || []
       const likedMap = readLikes()
-      const feeds = withFeedExtras(data.feeds || [], likedMap)
+      const commentEnabled = !!data.commentEnabled
+      const feeds = withFeedExtras(data.feeds || [], likedMap, commentEnabled)
       this.setData({
         covers,
         coverIndex: 0,
@@ -127,7 +129,8 @@ Page({
         seriesList: data.seriesList || [],
         feeds,
         previewFeeds: feeds.slice(0, FEED_PREVIEW),
-        likedMap
+        likedMap,
+        commentEnabled
       })
       this._applyCoverState(0, { autoPlayVideo: true })
     } catch (e) {
@@ -320,11 +323,12 @@ Page({
 
   onFeedComment(e) {
     const id = e.currentTarget.dataset.id
-    if (!id) return
+    if (!id || !this.data.commentEnabled) return
     this._openComment(id)
   },
 
   onCommentLineTap(e) {
+    if (!this.data.commentEnabled) return
     const { feedId, cid, mine } = e.currentTarget.dataset
     if (!feedId) return
     if (mine === true || mine === 'true') {
@@ -336,7 +340,7 @@ Page({
           try {
             feedComments.removeComment(feedId, cid)
             const likedMap = this.data.likedMap || {}
-            const feeds = withFeedExtras(this.data.feeds, likedMap)
+            const feeds = withFeedExtras(this.data.feeds, likedMap, this.data.commentEnabled)
             this.setData({
               feeds,
               previewFeeds: feeds.slice(0, FEED_PREVIEW)
@@ -352,6 +356,7 @@ Page({
   },
 
   _openComment(feedId) {
+    if (!this.data.commentEnabled || !feedId) return
     const cached = userProfile.readProfile()
     this.setData({
       commentFeedId: feedId,
@@ -370,6 +375,7 @@ Page({
   },
 
   onSendComment(e) {
+    if (!this.data.commentEnabled) return
     const feedId = this.data.commentFeedId
     const values = (e.detail && e.detail.value) || {}
     const nick = userProfile.resolveNickFromForm(values)
@@ -377,7 +383,7 @@ Page({
     try {
       feedComments.addComment(feedId, text, nick)
       const likedMap = this.data.likedMap || {}
-      const feeds = withFeedExtras(this.data.feeds, likedMap)
+      const feeds = withFeedExtras(this.data.feeds, likedMap, this.data.commentEnabled)
       this.setData({
         feeds,
         previewFeeds: feeds.slice(0, FEED_PREVIEW),
@@ -412,7 +418,7 @@ Page({
     if (!id) return
     const likedMap = { ...(this.data.likedMap || {}) }
     likedMap[id] = !likedMap[id]
-    const feeds = withFeedExtras(this.data.feeds, likedMap)
+    const feeds = withFeedExtras(this.data.feeds, likedMap, this.data.commentEnabled)
     this.setData({
       likedMap,
       feeds,

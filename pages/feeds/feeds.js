@@ -22,13 +22,13 @@ function writeLikes(map) {
   }
 }
 
-function withFeedExtras(feeds, likedMap) {
+function withFeedExtras(feeds, likedMap, commentEnabled) {
   return (feeds || []).map((f) => {
-    const comments = feedComments.listByFeed(f.id)
+    const comments = commentEnabled ? feedComments.listByFeed(f.id).slice(0, 3) : []
     return {
       ...f,
       liked: !!likedMap[f.id],
-      comments: comments.slice(0, 3)
+      comments
     }
   })
 }
@@ -45,7 +45,8 @@ Page({
     commentVisible: false,
     commentFeedId: '',
     commentDraft: '',
-    commentNick: ''
+    commentNick: '',
+    commentEnabled: false
   },
 
   onLoad(query) {
@@ -60,7 +61,7 @@ Page({
     if (this.data.feeds && this.data.feeds.length) {
       this.setData({
         likedMap,
-        feeds: withFeedExtras(this.data.feeds, likedMap)
+        feeds: withFeedExtras(this.data.feeds, likedMap, this.data.commentEnabled)
       })
     }
   },
@@ -74,11 +75,13 @@ Page({
     try {
       const data = await api.getHome()
       const likedMap = readLikes()
-      const feeds = withFeedExtras(data.feeds || [], likedMap)
+      const commentEnabled = !!data.commentEnabled
+      const feeds = withFeedExtras(data.feeds || [], likedMap, commentEnabled)
       this.setData({
         feeds,
         likedMap,
-        studio: data.studio || {}
+        studio: data.studio || {},
+        commentEnabled
       })
       this._scrollToFocus()
     } catch (e) {
@@ -120,11 +123,12 @@ Page({
 
   onFeedComment(e) {
     const id = e.currentTarget.dataset.id
-    if (!id) return
+    if (!id || !this.data.commentEnabled) return
     this._openComment(id)
   },
 
   onCommentLineTap(e) {
+    if (!this.data.commentEnabled) return
     const { feedId, cid, mine } = e.currentTarget.dataset
     if (!feedId) return
     if (mine === true || mine === 'true') {
@@ -136,7 +140,7 @@ Page({
           try {
             feedComments.removeComment(feedId, cid)
             const likedMap = this.data.likedMap || {}
-            this.setData({ feeds: withFeedExtras(this.data.feeds, likedMap) })
+            this.setData({ feeds: withFeedExtras(this.data.feeds, likedMap, this.data.commentEnabled) })
           } catch (err) {
             wx.showToast({ title: (err && err.message) || '删除失败', icon: 'none' })
           }
@@ -148,6 +152,7 @@ Page({
   },
 
   _openComment(feedId) {
+    if (!this.data.commentEnabled || !feedId) return
     const cached = userProfile.readProfile()
     this.setData({
       commentFeedId: feedId,
@@ -166,6 +171,7 @@ Page({
   },
 
   onSendComment(e) {
+    if (!this.data.commentEnabled) return
     const feedId = this.data.commentFeedId
     const values = (e.detail && e.detail.value) || {}
     const nick = userProfile.resolveNickFromForm(values)
@@ -174,7 +180,7 @@ Page({
       feedComments.addComment(feedId, text, nick)
       const likedMap = this.data.likedMap || {}
       this.setData({
-        feeds: withFeedExtras(this.data.feeds, likedMap),
+        feeds: withFeedExtras(this.data.feeds, likedMap, this.data.commentEnabled),
         commentVisible: false,
         commentFeedId: '',
         commentDraft: '',
@@ -202,7 +208,7 @@ Page({
     likedMap[id] = !likedMap[id]
     this.setData({
       likedMap,
-      feeds: withFeedExtras(this.data.feeds, likedMap)
+      feeds: withFeedExtras(this.data.feeds, likedMap, this.data.commentEnabled)
     })
     writeLikes(likedMap)
   },

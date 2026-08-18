@@ -18,7 +18,7 @@
     <view class="feed-footer">
       <text class="feed-time">三天前</text>
       <view class="feed-ops">
-        <view class="feed-op" data-id="{{item.id}}" bindtap="onFeedComment">
+        <view class="feed-op" wx:if="{{commentEnabled}}" data-id="{{item.id}}" bindtap="onFeedComment">
           <image class="feed-op-ico" src="/images/icons/comment.png" mode="aspectFit" />
         </view>
         <view class="feed-op" data-id="{{item.id}}" bindtap="onFeedShare">
@@ -33,7 +33,7 @@
         </view>
       </view>
     </view>
-    <view class="feed-comments" wx:if="{{item.comments.length}}">
+    <view class="feed-comments" wx:if="{{commentEnabled && item.comments.length}}">
       <view
         class="feed-comment-line"
         wx:for="{{item.comments}}"
@@ -59,7 +59,7 @@
     bind:share="onBottomShare"
   />
 
-  <view class="comment-mask" wx:if="{{commentVisible}}" bindtap="onCloseComment" catchtouchmove="noop">
+  <view class="comment-mask" wx:if="{{commentEnabled && commentVisible}}" bindtap="onCloseComment" catchtouchmove="noop">
     <view class="comment-sheet" catchtap="noop">
       <form class="comment-form" bindsubmit="onSendComment">
         <input

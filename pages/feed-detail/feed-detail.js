@@ -10,7 +10,8 @@ Page({
     comments: [],
     commentVisible: false,
     commentDraft: '',
-    commentNick: ''
+    commentNick: '',
+    commentEnabled: false
   },
 
   onLoad(query) {
@@ -29,14 +30,16 @@ Page({
       const home = await api.getHome()
       const studio = home.studio || {}
       const feed = (home.feeds || []).find((f) => f.id === this._feedId) || null
-      const comments = feed ? feedComments.listByFeed(feed.id) : []
+      const commentEnabled = !!home.commentEnabled
+      const comments = commentEnabled && feed ? feedComments.listByFeed(feed.id) : []
       this.setData({
         feed,
         studio: {
           name: studio.name || '椿屿影像',
           avatar: studio.avatar || ''
         },
-        comments
+        comments,
+        commentEnabled
       })
       if (!feed) {
         wx.showToast({ title: '动态不存在', icon: 'none' })
@@ -61,6 +64,7 @@ Page({
   },
 
   onOpenComment() {
+    if (!this.data.commentEnabled) return
     const cached = userProfile.readProfile()
     this.setData({
       commentVisible: true,
@@ -78,6 +82,7 @@ Page({
   },
 
   onSendComment(e) {
+    if (!this.data.commentEnabled) return
     const values = (e.detail && e.detail.value) || {}
     const nick = userProfile.resolveNickFromForm(values)
     const text = String(values.content || this.data.commentDraft || '').trim()
@@ -96,6 +101,7 @@ Page({
   },
 
   onCommentTap(e) {
+    if (!this.data.commentEnabled) return
     const { id, mine } = e.currentTarget.dataset
     if (!id || !(mine === true || mine === 'true')) return
     wx.showActionSheet({

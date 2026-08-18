@@ -2,7 +2,8 @@ module.exports = {
 	"updatedAt": "2026-08-17 11:00:00",
 	"settings": {
 		"watermarkEnabled": false,
-		"shareEnabled": true
+		"shareEnabled": true,
+		"commentEnabled": false
 	},
 	"home": {
 		"covers": [

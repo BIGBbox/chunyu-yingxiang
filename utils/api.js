@@ -145,7 +145,9 @@ function normalize(raw) {
       shareEnabled:
         !data.settings || data.settings.shareEnabled == null
           ? true
-          : flagOn(data.settings.shareEnabled)
+          : flagOn(data.settings.shareEnabled),
+      // 动态评论；未显式 true 则关闭
+      commentEnabled: !!(data.settings && flagOn(data.settings.commentEnabled))
     }
   }
 }
@@ -291,7 +293,8 @@ async function getHome() {
     showDouyin,
     showStore,
     store: data.store,
-    styleCount: data.styles.length
+    styleCount: data.styles.length,
+    commentEnabled: !!(data.settings && data.settings.commentEnabled)
   }
 }
 

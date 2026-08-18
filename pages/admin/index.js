@@ -10,7 +10,8 @@ function switchOn(e) {
 Page({
   data: {
     watermarkEnabled: false,
-    shareEnabled: true
+    shareEnabled: true,
+    commentEnabled: false
   },
 
   async onShow() {
@@ -39,7 +40,8 @@ Page({
         shareEnabled:
           !data.settings || data.settings.shareEnabled == null
             ? true
-            : !!data.settings.shareEnabled
+            : !!data.settings.shareEnabled,
+        commentEnabled: !!(data.settings && data.settings.commentEnabled)
       })
     } catch (e) {
       /* ignore */
@@ -111,6 +113,33 @@ Page({
       })
       .catch((err) => {
         this.setData({ shareEnabled: prev })
+        wx.hideLoading()
+        wx.showToast({ title: (err && err.message) || '保存失败', icon: 'none' })
+      })
+  },
+
+  onToggleComment(e) {
+    const enabled = switchOn(e)
+    const prev = this.data.commentEnabled
+    this.setData({ commentEnabled: enabled })
+    if (!cosUtil.hasCosCredentials()) {
+      this.setData({ commentEnabled: prev })
+      wx.showToast({ title: '请先配置 COS', icon: 'none' })
+      return
+    }
+    wx.showLoading({ title: '保存中', mask: true })
+    api
+      .getAll()
+      .then((all) => {
+        all.settings = { ...(all.settings || {}), commentEnabled: enabled }
+        return api.saveAll(all)
+      })
+      .then(() => {
+        wx.hideLoading()
+        wx.showToast({ title: enabled ? '已开启评论' : '已关闭评论', icon: 'success' })
+      })
+      .catch((err) => {
+        this.setData({ commentEnabled: prev })
         wx.hideLoading()
         wx.showToast({ title: (err && err.message) || '保存失败', icon: 'none' })
       })

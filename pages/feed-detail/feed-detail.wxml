@@ -15,7 +15,7 @@
   </view>
   <view class="feed-time">三天前</view>
 
-  <view class="comment-section" wx:if="{{comments.length}}">
+  <view class="comment-section" wx:if="{{commentEnabled && comments.length}}">
     <view class="comment-head">最新热评 {{comments.length}}</view>
     <view class="comment-item" wx:for="{{comments}}" wx:key="id" data-id="{{item.id}}" data-mine="{{item.mine}}" bindtap="onCommentTap">
       <image class="comment-avatar" src="/images/icons/avatar-default.png" mode="aspectFill" />
@@ -29,13 +29,13 @@
   <bottom-bar
     studio-name="{{studio.name}}"
     avatar="{{studio.avatar}}"
-    show-comment="{{true}}"
+    show-comment="{{commentEnabled}}"
     bind:home="onGoHome"
     bind:comment="onOpenComment"
     bind:share="onBottomShare"
   />
 
-  <view class="comment-mask" wx:if="{{commentVisible}}" bindtap="onCloseComment" catchtouchmove="noop">
+  <view class="comment-mask" wx:if="{{commentEnabled && commentVisible}}" bindtap="onCloseComment" catchtouchmove="noop">
     <view class="comment-sheet" catchtap="noop">
       <form class="comment-form" bindsubmit="onSendComment">
         <input
