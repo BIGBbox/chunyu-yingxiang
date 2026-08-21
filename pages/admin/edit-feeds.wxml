@@ -1,17 +1,26 @@
-<view class="page">
+﻿<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-inner">
+      <view class="nav-back" bindtap="onNavBack">
+        <text class="nav-back-ico">‹</text>
+      </view>
+      <view class="nav-title">动态管理</view>
+    </view>
+  </view>
+
   <block wx:if="{{mode === 'list'}}">
     <view class="toolbar">
       <view class="add-btn" bindtap="onCreate">+ 新建动态</view>
     </view>
-    <view class="list-card" wx:for="{{feeds}}" wx:key="id">
+    <view class="list-card" wx:for="{{feeds}}" wx:key="id" data-id="{{item.id}}" bindtap="onEdit">
       <image class="thumb" src="{{item.images[0] || ''}}" mode="aspectFill" wx:if="{{item.images[0]}}" />
       <view class="thumb placeholder" wx:else>无图</view>
       <view class="list-body">
         <view class="list-name">{{item.text || '（无文案）'}}</view>
         <view class="list-sub">{{item.images.length}} 张图 · 排序 {{item.sort}}</view>
         <view class="list-actions">
-          <text class="link" data-id="{{item.id}}" bindtap="onEdit">编辑</text>
-          <text class="link danger" data-id="{{item.id}}" bindtap="onDelete">删除</text>
+          <text class="link" data-id="{{item.id}}" catchtap="onEdit">编辑</text>
+          <text class="link danger" data-id="{{item.id}}" catchtap="onDelete">删除</text>
         </view>
       </view>
     </view>
@@ -37,7 +46,6 @@
       <view class="hint">游客端时间固定显示「三天前」；点赞状态保存在各用户本机。</view>
     </view>
     <view class="footer-btns">
-      <view class="btn ghost" bindtap="onCancel">取消</view>
       <view class="btn primary" bindtap="onSave">保存到 COS</view>
     </view>
   </block>

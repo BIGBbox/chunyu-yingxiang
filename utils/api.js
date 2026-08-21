@@ -272,8 +272,19 @@ function forDisplay(data) {
   return next
 }
 
+/** 仅作品列表使用水印：只处理列表封面，不影响其他页面。 */
+function forStyleListDisplay(data) {
+  if (!data || !data.settings || !data.settings.watermarkEnabled) return data
+  const next = clone(data)
+  next.styles = (next.styles || []).map((style) => ({
+    ...style,
+    cover: style.cover ? mapImageUrl(style.cover) : ''
+  }))
+  return next
+}
+
 async function getHome() {
-  const data = forDisplay(await loadContent())
+  const data = await loadContent()
   const home = data.home || normalizeHome({})
   const covers = (home.covers || []).filter((c) => c && c.url)
   const xhs = data.social && data.social.xhs && data.social.xhs.enabled ? data.social.xhs : null
@@ -299,7 +310,7 @@ async function getHome() {
 }
 
 async function getStylesBySeries(seriesId, keyword) {
-  const data = forDisplay(await loadContent())
+  const data = forStyleListDisplay(await loadContent())
   const series = data.series.find((s) => s.id === seriesId) || null
   let styles = data.styles.filter((s) => s.seriesId === seriesId)
   if (keyword && String(keyword).trim()) {
@@ -382,17 +393,11 @@ async function getStyleDetail(id) {
   if (!style) throw new Error('客片不存在')
   const view = clone(style)
   view.viewCount = fakeViewCount(style.id)
-  if (data.settings && data.settings.watermarkEnabled) {
-    if (view.cover) view.cover = mapImageUrl(view.cover)
-    if (view.avatar) view.avatar = mapImageUrl(view.avatar)
-    if (view.images) view.images = mapUrlList(view.images)
-    if (view.gallery) view.gallery = mapUrlList(view.gallery)
-  }
   return view
 }
 
 async function search(keyword) {
-  const data = forDisplay(await loadContent())
+  const data = await loadContent()
   if (!keyword || !String(keyword).trim()) return { results: [] }
   const kw = String(keyword).trim()
   const seriesMap = {}
@@ -419,12 +424,7 @@ async function search(keyword) {
 
 async function getStore(opts) {
   const data = await loadContent()
-  const store = clone(data.store)
-  if (opts && opts.display && data.settings && data.settings.watermarkEnabled) {
-    if (store.guidance) store.guidance = mapUrlList(store.guidance)
-    if (store.environment) store.environment = mapUrlList(store.environment)
-  }
-  return store
+  return clone(data.store)
 }
 
 async function getAll() {

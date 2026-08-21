@@ -1,0 +1,32 @@
+.page-footer {
+  padding: 40rpx 0 24rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.page-footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12rpx;
+  color: #999;
+  font-size: 22rpx;
+  letter-spacing: 4rpx;
+}
+
+.page-footer__icon {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 8rpx;
+  background: linear-gradient(135deg, #8b6cff 0%, #6a4dff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 16rpx rgba(106, 77, 255, 0.2);
+}
+
+.page-footer__dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: #fff;
+}

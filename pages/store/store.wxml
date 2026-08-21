@@ -1,4 +1,4 @@
-<view class="page safe-bottom">
+﻿<view class="page safe-bottom">
   <view class="block">
     <view class="block-title">门店位置</view>
     <view class="block-sub">{{store.city}}</view>

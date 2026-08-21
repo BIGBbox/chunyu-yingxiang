@@ -1,0 +1,89 @@
+﻿<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-inner">
+      <view class="nav-back" bindtap="onNavBack">
+        <text class="nav-back-ico">‹</text>
+      </view>
+      <view class="nav-title">作品管理</view>
+    </view>
+  </view>
+
+  <block wx:if="{{mode === 'list'}}">
+    <view class="toolbar">
+      <picker mode="selector" range="{{filterLabels}}" bindchange="onFilterSeries">
+        <view class="filter-btn">筛选系列</view>
+      </picker>
+      <view class="add-btn" bindtap="onCreate">+ 新建作品</view>
+    </view>
+    <view class="list-card" wx:for="{{filtered}}" wx:key="id" data-id="{{item.id}}" bindtap="onEdit">
+      <image class="thumb" src="{{item.cover}}" mode="aspectFill" />
+      <view class="list-body">
+        <view class="list-name">{{item.name}}</view>
+        <view class="list-sub">{{seriesNames[item.seriesId] || '未归类'}}</view>
+        <view class="list-actions">
+          <text class="link" data-id="{{item.id}}" catchtap="onEdit">编辑</text>
+          <text class="link danger" data-id="{{item.id}}" catchtap="onDelete">删除</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!filtered.length}}">暂无作品</view>
+  </block>
+
+  <block wx:else>
+    <view class="form-card">
+      <view class="label">所属系列</view>
+      <picker mode="selector" range="{{seriesLabels}}" value="{{formSeriesIndex}}" bindchange="onSeriesPick">
+        <view class="picker-val">{{seriesNames[form.seriesId] || '未归类'}}</view>
+      </picker>
+
+      <view class="label">作品名称</view>
+      <input class="input" data-field="name" value="{{form.name}}" bindinput="onInput" />
+
+      <view class="label">排序</view>
+      <input class="input" type="number" data-field="sort" value="{{form.sort}}" bindinput="onInput" />
+
+      <view class="label">封面预览</view>
+      <view class="cover-preview-card">
+        <image wx:if="{{form.cover}}" class="cover-preview-img" src="{{form.cover}}" mode="aspectFill" />
+        <view class="cover-preview-empty" wx:else>请先从下方作品照片中选择封面</view>
+        <view class="cover-preview-meta" wx:if="{{form.name}}">
+          <view class="cover-preview-name">{{form.name}}</view>
+          <view class="cover-preview-tag">#{{form.name}}</view>
+        </view>
+      </view>
+
+      <view class="label">作品照片</view>
+      <view class="photo-grid" catchtouchmove="onGridTouchMove" catchtouchend="onPhotoTouchEnd" catchtouchcancel="onPhotoTouchEnd">
+        <view
+          class="photo-card {{activePhotoIndex === index ? 'is-active' : ''}} {{draggingPhotoIndex === index ? 'is-source' : ''}}"
+          wx:for="{{photoList}}"
+          wx:key="index"
+          data-index="{{index}}"
+          bindtap="onPhotoTap"
+          bindlongpress="onPhotoLongPress"
+        >
+          <image class="photo-card-img" src="{{item}}" mode="aspectFill" />
+          <view class="photo-card-placeholder" wx:if="{{draggingPhotoIndex === index}}"></view>
+          <view class="photo-card-mask" wx:if="{{activePhotoIndex === index && draggingPhotoIndex < 0}}">
+            <view class="photo-card-actions">
+              <view class="mini-op" data-index="{{index}}" data-action="cover" catchtap="onPhotoAction">封面</view>
+              <view class="mini-op danger" data-index="{{index}}" data-action="remove" catchtap="onPhotoAction">删除</view>
+            </view>
+          </view>
+        </view>
+        <view class="upload-tile" wx:if="{{draggingPhotoIndex < 0}}" bindtap="onUploadImages">+</view>
+      </view>
+      <view
+        class="photo-ghost"
+        wx:if="{{draggingPhotoIndex >= 0 && dragGhostUrl}}"
+        style="transform: translate3d({{dragGhostX}}px, {{dragGhostY}}px, 0) translate(-50%, -50%);"
+      >
+        <image class="photo-ghost-img" src="{{dragGhostUrl}}" mode="aspectFill" />
+      </view>
+      <view class="hint">点击照片显示操作；长按拖拽时其他图片会实时预览新顺序，松手后才生效。</view>
+    </view>
+    <view class="footer-btns">
+      <view class="btn primary" bindtap="onSave">保存到 COS</view>
+    </view>
+  </block>
+</view>

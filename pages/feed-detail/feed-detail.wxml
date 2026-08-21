@@ -1,4 +1,4 @@
-<view class="page" wx:if="{{feed}}">
+﻿<view class="page" wx:if="{{feed}}">
   <view class="feed-text">{{feed.text}}</view>
   <view class="feed-grid feed-grid-{{feed.images.length}}" wx:if="{{feed.images.length}}">
     <image
@@ -25,7 +25,6 @@
       </view>
     </view>
   </view>
-
   <bottom-bar
     studio-name="{{studio.name}}"
     avatar="{{studio.avatar}}"

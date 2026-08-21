@@ -1,4 +1,4 @@
-<view class="page">
+﻿<view class="page">
   <!-- ① 封面：在导航栏下方，不侵入刘海 -->
   <view class="cover-wrap" style="height: {{coverHeight}}px;">
     <swiper
@@ -193,7 +193,6 @@
     <view class="feeds-empty" wx:if="{{!feeds.length}}">暂无动态</view>
     <view class="more-feeds" wx:if="{{feeds.length > 3}}" bindtap="onMoreFeeds">更多动态</view>
   </view>
-
   <bottom-bar
     studio-name="{{studio.name}}"
     avatar="{{studio.avatar}}"

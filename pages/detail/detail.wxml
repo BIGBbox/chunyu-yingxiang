@@ -1,4 +1,4 @@
-<view class="page" wx:if="{{!loading && detail}}">
+﻿<view class="page" wx:if="{{!loading && detail}}">
   <view class="top" style="padding-top: {{statusBarHeight}}px;">
     <view class="nav-back" bindtap="onBack">
       <text class="nav-back-ico">‹</text>

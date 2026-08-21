@@ -52,16 +52,16 @@ Page({
     wx.navigateTo({ url: '/pages/admin/edit-series' })
   },
 
+  goEditWorks() {
+    wx.navigateTo({ url: '/pages/admin/edit-works' })
+  },
+
   goEditHome() {
     wx.navigateTo({ url: '/pages/admin/edit-home' })
   },
 
   goEditFeeds() {
     wx.navigateTo({ url: '/pages/admin/edit-feeds' })
-  },
-
-  goEditStore() {
-    wx.navigateTo({ url: '/pages/admin/edit-store' })
   },
 
   onToggleWatermark(e) {

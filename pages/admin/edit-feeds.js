@@ -8,12 +8,35 @@ function emptyForm() {
 Page({
   data: {
     mode: 'list',
+    statusBarHeight: 20,
     feeds: [],
     form: emptyForm()
   },
 
+  onLoad() {
+    const sys = wx.getSystemInfoSync()
+    this.setData({ statusBarHeight: sys.statusBarHeight || 20 })
+  },
+
   onShow() {
     if (this.data.mode === 'list') this.loadList()
+  },
+
+  onNavBack() {
+    if (this.data.mode === 'edit') {
+      this.onCancel()
+      return
+    }
+    wx.navigateBack({ delta: 1 })
+  },
+
+  /** 编辑态点导航栏返回：回到动态列表 */
+  onBackPress() {
+    if (this.data.mode === 'edit') {
+      this.onCancel()
+      return true
+    }
+    return false
   },
 
   async loadList() {

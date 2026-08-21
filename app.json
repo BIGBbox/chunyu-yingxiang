@@ -9,8 +9,8 @@
     "pages/detail/detail",
     "pages/store/store",
     "pages/admin/index",
+    "pages/admin/edit-works",
     "pages/admin/edit-series",
-    "pages/admin/edit-store",
     "pages/admin/edit-home",
     "pages/admin/edit-feeds"
   ],

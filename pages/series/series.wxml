@@ -1,4 +1,4 @@
-<view class="page">
+﻿<view class="page">
   <view class="hero" catchtouchmove="noop">
     <view class="hero-bg-wrap">
       <image class="hero-bg" wx:if="{{blurCover}}" src="{{blurCover}}" mode="aspectFill" />

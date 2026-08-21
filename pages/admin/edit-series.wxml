@@ -1,28 +1,37 @@
-<view class="page">
+﻿<view class="page">
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-inner">
+      <view class="nav-back" bindtap="onNavBack">
+        <text class="nav-back-ico">‹</text>
+      </view>
+      <view class="nav-title">系列管理</view>
+    </view>
+  </view>
+
   <block wx:if="{{mode === 'list'}}">
     <view class="pref-card">
       <view class="switch-row">
         <view class="switch-label">
-          <view class="switch-title">删除系列时同时删除客片</view>
-          <view class="switch-sub">默认关闭：只删系列，其下客片变为「未归类」。开启后会一并删除客片。</view>
+          <view class="switch-title">删除系列时同时删除作品</view>
+          <view class="switch-sub">默认关闭：只删系列，其下作品变为「未归类」。开启后会一并删除作品。</view>
         </view>
         <switch checked="{{deleteStylesWithSeries}}" bindchange="onToggleDeleteStyles" color="#6a4dff" />
       </view>
     </view>
     <view class="toolbar"><view class="add-btn" bindtap="onCreate">+ 新建系列</view></view>
-    <view class="list-card" wx:for="{{series}}" wx:key="id">
-      <view class="list-main" data-id="{{item.id}}" bindtap="onEdit">
-        <image class="thumb" src="{{item.cover}}" mode="aspectFill" />
-        <view class="list-body">
-          <view class="list-name">
-            {{item.name}}
-            <text class="badge-hide" wx:if="{{item.hidden}}">已隐藏</text>
-          </view>
-          <view class="list-sub">排序 {{item.sort}}{{item.hot ? ' · 热门' : ''}}</view>
+    <view class="list-card" wx:for="{{series}}" wx:key="id" data-id="{{item.id}}" bindtap="onEdit">
+      <image class="thumb" src="{{item.cover}}" mode="aspectFill" />
+      <view class="list-body">
+        <view class="list-name">
+          {{item.name}}
+          <text class="badge-hide" wx:if="{{item.hidden}}">未显示</text>
         </view>
-        <text class="arrow">›</text>
+        <view class="list-sub">排序 {{item.sort}}{{item.hot ? ' · 热门' : ''}}</view>
+        <view class="list-actions">
+          <text class="link" data-id="{{item.id}}" catchtap="onEdit">编辑</text>
+          <text class="link danger" data-id="{{item.id}}" catchtap="onDelete">删除</text>
+        </view>
       </view>
-      <text class="op-del" data-id="{{item.id}}" catchtap="onDelete">删除</text>
     </view>
   </block>
   <block wx:else>
@@ -40,10 +49,10 @@
       </view>
       <view class="switch-row">
         <view class="switch-label">
-          <view class="switch-title">从首页隐藏</view>
-          <view class="switch-sub">开启后游客端首页不显示该系列，客片仍保留。</view>
+          <view class="switch-title">是否显示</view>
+          <view class="switch-sub">开启后游客端首页显示该系列；默认显示，关闭后仅隐藏展示。</view>
         </view>
-        <switch checked="{{form.hidden}}" bindchange="onHiddenChange" color="#6a4dff" />
+        <switch checked="{{!form.hidden}}" bindchange="onVisibleChange" color="#6a4dff" />
       </view>
       <view class="label">封面</view>
       <view class="img-row">
@@ -53,7 +62,6 @@
       <view class="danger-link" wx:if="{{form.id}}" bindtap="onDelete">删除此系列</view>
     </view>
     <view class="footer-btns">
-      <view class="btn ghost" bindtap="onBack">返回</view>
       <view class="btn primary" bindtap="onSave">保存到 COS</view>
     </view>
   </block>

@@ -27,14 +27,37 @@ function writeDeleteStylesPref(v) {
 Page({
   data: {
     mode: 'list',
+    statusBarHeight: 20,
     series: [],
     deleteStylesWithSeries: false,
     form: { id: '', name: '', cover: '', sort: 0, hot: true, hidden: false }
   },
 
+  onLoad() {
+    const sys = wx.getSystemInfoSync()
+    this.setData({ statusBarHeight: sys.statusBarHeight || 20 })
+  },
+
   onShow() {
     this.setData({ deleteStylesWithSeries: readDeleteStylesPref() })
     if (this.data.mode === 'list') this.loadList()
+  },
+
+  onNavBack() {
+    if (this.data.mode === 'edit') {
+      this.onBack()
+      return
+    }
+    wx.navigateBack({ delta: 1 })
+  },
+
+  /** 编辑态点导航栏返回：回到系列列表 */
+  onBackPress() {
+    if (this.data.mode === 'edit') {
+      this.onBack()
+      return true
+    }
+    return false
   },
 
   loadList() {
@@ -90,8 +113,8 @@ Page({
     this.setData({ 'form.hot': switchOn(e) })
   },
 
-  onHiddenChange(e) {
-    this.setData({ 'form.hidden': switchOn(e) })
+  onVisibleChange(e) {
+    this.setData({ 'form.hidden': !switchOn(e) })
   },
 
   onUploadCover() {
@@ -153,8 +176,8 @@ Page({
         let content = `将删除「${name}」，不可恢复。`
         if (styleCount) {
           content = deleteStyles
-            ? `将删除「${name}」及其下 ${styleCount} 条客片，不可恢复。确定？`
-            : `将删除「${name}」。其下 ${styleCount} 条客片会变为「未归类」，可在客片管理中重新指定系列。确定？`
+            ? `将删除「${name}」及其下 ${styleCount} 条作品，不可恢复。确定？`
+            : `将删除「${name}」。其下 ${styleCount} 条作品会变为「未归类」，可在作品管理中重新指定系列。确定？`
         }
         return new Promise((resolve) => {
           wx.showModal({

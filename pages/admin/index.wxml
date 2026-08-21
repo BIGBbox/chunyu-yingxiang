@@ -1,4 +1,4 @@
-<view class="page">
+﻿<view class="page">
   <view class="menu">
     <view class="menu-item" bindtap="goEditHome">
       <text class="menu-title">首页封面与工作室</text>
@@ -10,14 +10,14 @@
       <text class="menu-sub">文案与九宫格图片</text>
       <text class="arrow">›</text>
     </view>
-    <view class="menu-item" bindtap="goEditSeries">
-      <text class="menu-title">系列管理</text>
-      <text class="menu-sub">新增、隐藏或删除系列</text>
+    <view class="menu-item" bindtap="goEditWorks">
+      <text class="menu-title">作品管理</text>
+      <text class="menu-sub">新增、编辑或删除作品</text>
       <text class="arrow">›</text>
     </view>
-    <view class="menu-item" bindtap="goEditStore">
-      <text class="menu-title">门店信息</text>
-      <text class="menu-sub">展示开关、地址、环境图</text>
+    <view class="menu-item" bindtap="goEditSeries">
+      <text class="menu-title">系列管理</text>
+      <text class="menu-sub">新增、显示或删除系列</text>
       <text class="arrow">›</text>
     </view>
   </view>

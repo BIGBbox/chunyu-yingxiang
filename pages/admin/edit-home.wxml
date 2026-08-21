@@ -1,4 +1,4 @@
-<view class="page">
+﻿<view class="page">
   <view class="form-card">
     <view class="block-title">封面（固定 5 槽）</view>
     <view class="hint">可上传图片或视频；空槽不在游客端展示。视频会静音循环播放。</view>
@@ -61,7 +61,6 @@
     </view>
     <view class="hint">请上传微信公众平台下载的小程序码图片；未配置时名片底栏显示占位圆。</view>
   </view>
-
   <view class="footer-btns">
     <view class="btn primary" bindtap="onSave">保存到 COS</view>
   </view>

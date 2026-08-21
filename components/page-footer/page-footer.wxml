@@ -1,0 +1,8 @@
+<view class="page-footer">
+  <view class="page-footer__brand">
+    <view class="page-footer__icon">
+      <view class="page-footer__dot" />
+    </view>
+    <text class="page-footer__text">{{shortName}}</text>
+  </view>
+</view>
